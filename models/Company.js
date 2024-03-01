@@ -1,4 +1,6 @@
 const mongoose = require('mongoose') ;
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const CompanySchema = new mongoose.Schema({
     name: {
@@ -22,17 +24,29 @@ const CompanySchema = new mongoose.Schema({
         type: String ,
         required: [true , "Please provide telephone number"]
     },
-    email: {
+    contact_email: {
         type: String ,
-        required:[true,'Please provide an email'],
+        required:[true,'Please provide a contact_email'],
+        match: [/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ , 'Please add a valid email']
+    },
+    login_email: {
+        type: String ,
+        required:[true,'Please provide a login_email'],
         unique: true,
+        select: false,
         match: [/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ , 'Please add a valid email']
     },
     password: {
         type: String ,
         required: [true , "Please provide a password"] ,
         minlength: 6 ,
-        select: false
+        select: false,
+        resetPasswordToken: String,
+        resetPasswordExpire: Date,
+        createdAt:{
+            type: Date,
+            default:Date.now
+        }
     },
     size: {
         type: String ,
@@ -42,5 +56,23 @@ const CompanySchema = new mongoose.Schema({
         type: [{tid:mongoose.Schema.ObjectId}]
     }
 });
+
+//Encrypt password using bcrypt
+CompanySchema.pre('save',async function(next) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password,salt);
+});
+
+//Sign JWT and return
+CompanySchema.methods.getSignedJwtToken=function(){
+    return jwt.sign({id:this._id} , process.env.JWT_SECRET,{
+        expiresIn: process.env.JWT_EXPIRE
+    });
+}
+
+//Match user entered password to hashed password in database
+CompanySchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword , this.password) ;
+}
 
 module.exports=mongoose.model('Company',CompanySchema);

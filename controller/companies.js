@@ -36,11 +36,18 @@ exports.getCompany = async (req,res,next) => {
 //@route GET /api/v1/companys
 //@access Private
 exports.createCompany = async (req,res,next) => {
-    const company = await Company.create(req.body) ;
-    res.status(201).json({
-        success: true,
-        data: company
-    });
+    try {
+        const company = await Company.create(req.body) ;
+        res.status(201).json({
+            success: true,
+            data: company
+        });
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false , msg : "Please recheck your detail before submit"})
+    }
+    
 };
 
 //@DESC Update company
