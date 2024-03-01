@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
         minlength: 10
     },
     reservation: {
-        type: [{rid:mongoose.Schema.ObjectId}]
+        type: []
     }
 
 });
