@@ -42,6 +42,7 @@ exports.login = async (req , res , next) => {
     }
 }
 
+//Inner function
 const sendTokenResponse = (user , statusCode , res) => {
      const token = user.getSignedJwtToken()
 

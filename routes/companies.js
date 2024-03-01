@@ -1,5 +1,5 @@
 const express = require('express');
-const {getCompanys , getCompany , createCompany , updateCompany , deleteCompany} = require('../controllers/companys');
+const {getCompanys , getCompany , createCompany , updateCompany , deleteCompany} = require('../controller/companies');
 
 const router = express.Router();
 

@@ -17,6 +17,11 @@ app.use(cookieParser())
 const auth = require('./routes/auth')
 app.use('/api/auth' , auth)
 
+const companies = require('./routes/companies')
+app.use('/api/companies' , companies)
+
+
+
 
 const PORT = process.env.PORT
 const server = app.listen(PORT , console.log("Server Started in Port : " + PORT))
