@@ -1,7 +1,7 @@
 const Company = require('../models/Company');
 
 //@DESC Get all companys
-//@route GET /api/v1/companys
+//@route GET /api/v1/companies
 //@access Public
 exports.getCompanies = async (req,res,next) => {
     try {
