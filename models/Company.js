@@ -42,3 +42,5 @@ const CompanySchema = new mongoose.Schema({
         type: [{tid:mongoose.Schema.ObjectId}]
     }
 });
+
+module.exports=mongoose.model('Company',CompanySchema);
