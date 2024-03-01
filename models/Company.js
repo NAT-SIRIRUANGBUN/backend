@@ -65,7 +65,7 @@ CompanySchema.pre('save',async function(next) {
 
 //Sign JWT and return
 CompanySchema.methods.getSignedJwtToken=function(){
-    return jwt.sign({id:this._id} , process.env.JWT_SECRET,{
+    return jwt.sign({id:this._id , type:'Company'} , process.env.JWT_SECRET,{
         expiresIn: process.env.JWT_EXPIRE
     });
 }
