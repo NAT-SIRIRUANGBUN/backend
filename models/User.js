@@ -36,7 +36,10 @@ const UserSchema = new mongoose.Schema({
         match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im]
     },
     reservation: {
-        type: [{type:mongoose.Schema.ObjectId}]
+        type: [{
+            type:mongoose.Schema.ObjectId,
+            ref: "Reservation"
+        }]
     }
 
 });

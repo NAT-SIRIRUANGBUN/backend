@@ -6,7 +6,8 @@ const User = require('../models/User')
 exports.getReservations = async (req,res,next)=>{
     let query;
     if(req.user.role !== 'admin'){
-        query = Reservation.find({user:req.user.id}).populate({
+        query = Reservation.find({user:req.user.id})
+        query = query.populate({
             path: 'timeslot',
             select: 'company date startTime endTime'
         });
@@ -63,7 +64,24 @@ exports.addReservation = async(req,res,next)=>{
         if(!timeslot){
             return res.status(404).json({success:false, message: `No timeslot with the id of ${req.params.timeslotId}`});
         }
-        const ThisUser = await User.findById(req.user.id);
+        const ThisUser = await  User.findById(req.user.id).populate({
+            path: 'reservation',
+            select: 'timeslot'
+        })
+        
+        let isReserveThisTimeslot = false
+
+        //Check is this reservation is reserve by this user or not
+        for (let i = 0 ; i < ThisUser.reservation.length ; i++) {
+            if (ThisUser.reservation[i].timeslot.toString() === req.params.timeslotId) {
+                isReserveThisTimeslot = true
+                break
+            }
+        }
+
+        if (isReserveThisTimeslot)
+            return res.status(400).json({success : false , msg : "You are already reserved this timeslot"})
+
         if(ThisUser.reservation.length >= 3 && req.user.role !== 'admin'){
             return res.status(400).json({success:false,message:`The user with ID ${req.user.id} has already made 3 reservation`});
         }
