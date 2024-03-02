@@ -54,6 +54,7 @@ exports.getCompanies = async (req,res,next) => {
         }
         res.status(200).json({success:true, count:companies.length, data:companies});
     }catch(err){
+        console.log(error);
         res.status(400).json({success:false});
     }
     
@@ -72,6 +73,7 @@ exports.getCompany = async (req,res,next) => {
 
         res.status(200).json({success: true, data: company});
     } catch (err) {
+        console.log(error);
         res.status(400).json({success: false});
     }
 };
@@ -110,6 +112,7 @@ exports.updateCompany = async (req,res,next) => {
 
         res.status(200).json({success:true, data: company});
     } catch (err) {
+        console.log(error);
         res.status(400).json({success: false});
     }
 };
@@ -127,7 +130,8 @@ exports.deleteCompany = async (req,res,next) => {
 
         res.status(200).json({success: true , data: {}});
     } catch (err) {
-            res.status(400).json({success: false});
+        console.log(error);
+        res.status(400).json({success: false});
     }
 };
 

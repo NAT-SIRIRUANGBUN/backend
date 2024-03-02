@@ -20,9 +20,7 @@ exports.protect = async (req , res , next) => {
             req.user.role = 'company'
         }
         next()
-    }
-
-    catch(err) {
+    }catch(err) {
         console.error(err.stack)
         return res.status(401).json({success : false , msg : "Faild to verify token or can not find user with provided token"})
     }
