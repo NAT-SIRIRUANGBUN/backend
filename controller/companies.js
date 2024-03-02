@@ -169,7 +169,8 @@ exports.createTimeslot = async (req , res , next) => {
     try {
         
         const newTimeslot = await Timeslot.create(req.body)
-        console.log(newTimeslot)
+        
+        res.status(200).json({success : true , timeslot : newTimeslot})
 
     }
     catch(err) {

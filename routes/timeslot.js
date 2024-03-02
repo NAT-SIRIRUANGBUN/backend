@@ -1,8 +1,9 @@
 const express = require('express')
-const {getTimeslot} = require('../controller/timeslot')
+const {getTimeslots , getTimeslot} = require('../controller/timeslot')
 
 const router = express.Router()
 
-router.route('/').get(getTimeslot)
+router.route('/').get(getTimeslots)
+router.route('/:id').get(getTimeslot)
 
 module.exports = router
