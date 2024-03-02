@@ -1,5 +1,6 @@
 const {Company , TimeSlot} = require('../models/Company');
-
+const Reservation = require('../models/Reservation');
+const User = require('../models/User')
 //@DESC Get all companys
 //@route GET /api/v1/companies
 //@access Public
@@ -228,7 +229,8 @@ exports.deleteTimeslot = async (req , res , next) => {
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
 
-        const deleteTimeslot = await (await TimeSlot.findById(req.params.timeslotid)).deleteOne()
+        // const deleteTimeslot = await (await TimeSlot.findById(req.params.timeslotid)).deleteOne()
+        cascadeDeleteTimeSlot(req.params.timeslotid)
 
         res.status(200).json({success : true , timeslot : {}})
     }
@@ -236,4 +238,23 @@ exports.deleteTimeslot = async (req , res , next) => {
         console.error(err)
         res.status(400).json({success : false , msg : "Something Wrong"})
     }
+}
+
+async function cascadeDeleteTimeSlot(timeSlotId) {
+    const thisTimeSlot = await TimeSlot.findById(timeSlotId)
+
+    let reservationList = thisTimeSlot.reservation
+
+    for (let i = 0 ; i < reservationList.length ; i++) {
+        let thisReservationId = reservationList[i]
+        // console.log(thisReservationId)
+        let thisReservation = await Reservation.findById(thisReservationId)
+        // console.log(thisReservation)
+        let thisUserId = thisReservation.user
+        // console.log(thisUserId)
+        const removeReservationFromUser = await User.findByIdAndUpdate(thisUserId , {$pull : {reservation : thisReservationId}})
+        const deleteThisReservation = await thisReservation.deleteOne()
+    }
+
+    await thisTimeSlot.deleteOne()
 }

@@ -84,7 +84,7 @@ exports.addReservation = async(req,res,next)=>{
             return res.status(400).json({success : false , msg : "You are already reserved this timeslot"})
         
         if(timeslot.reservation.length >= timeslot.capacity){
-            return res.status(400).json({success:false , msg : "The participant have already exceeded its capacity"});
+            return res.status(400).json({success:false , msg : "The timeslot have already exceeded its capacity"});
         }
         if(ThisUser.reservation.length >= 3 && req.user.role !== 'admin'){
             return res.status(400).json({success:false,msg:`The user with ID ${req.user.id} has already made 3 reservation`});
