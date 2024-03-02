@@ -67,13 +67,13 @@ exports.getCompany = async (req,res,next) => {
         const company = await Company.findById(req.params.id);
 
         if(!company){
-            return res.status(400).json({success: false});
+            return res.status(404).json({success: false , msg : "Can not find company with id : " + req.params.id});
         }
 
         res.status(200).json({success: true, data: company});
     } catch (err) {
         console.error(error);
-        res.status(400).json({success: false});
+        res.status(400).json({success: false , msg : "Something Wrong"});
     }
 };
 
@@ -106,13 +106,13 @@ exports.updateCompany = async (req,res,next) => {
         });
 
         if(!company){
-            res.status(400).json({success: false});
+            res.status(404).json({success: false , msg : "Can not find company with id : " + req.params.id});
         }
 
         res.status(200).json({success:true, data: company});
     } catch (err) {
         console.error(error);
-        res.status(400).json({success: false});
+        res.status(400).json({success: false , msg : "Something Wrong"});
     }
 };
 
@@ -124,32 +124,15 @@ exports.deleteCompany = async (req,res,next) => {
         const company = await Company.findByIdAndDelete(req.params.id);
 
         if(!company) {
-            return res.status(400).json({success:false});
+            return res.status(404).json({success:false , msg : "Can not find company with id : " + req.params.id});
         }
 
         res.status(200).json({success: true , data: {}});
     } catch (err) {
         console.error(error);
-        res.status(400).json({success: false});
+        res.status(400).json({success: false , msg : "Something Wrong"});
     }
 };
-
-exports.getTimeSlots = async (req , res , next) => {
-    try {
-        const thisCompany = await Company.findById(req.params.id)
-
-        if (!thisCompany)
-            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
-        
-        const timeslot = thisCompany.timeslot
-        
-        res.status(200).json({success : true , timeslot})
-    }
-    catch(err) {
-        console.error(err)
-        res.statis(400).json({msg : "Something Wrong"})
-    }
-}
 
 exports.getCompanyTimeSlot = async (req , res , next) => {
     try {
@@ -171,14 +154,72 @@ exports.getCompanyTimeSlot = async (req , res , next) => {
 exports.createTimeslot = async (req , res , next) => {
     try {
 
-        if (req.params.id !== req.user.id) {
+        const thisCompany = await Company.findById(req.user.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
+            
+        if (req.params.id !== req.user.id) 
             return res.status(400).json({success : false , msg : "Please use correct company account to create this time slot"})
-        }
+        
         req.body.company = req.user.id
         const newTimeslot = await Timeslot.create(req.body)
         
         res.status(200).json({success : true , timeslot : newTimeslot})
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false , msg : "Something Wrong"})
+    }
+}
 
+exports.updateTimeslot = async (req , res , next) => {
+    try {
+
+        const thisCompany = await Company.findById(req.user.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
+
+        if (req.params.id !== req.user.id) 
+            return res.status(400).json({success : false , msg : "Please use correct company account to update this timeslot"})
+        
+        const thisTimeslot = await Timeslot.findById(req.params.timeslotid)
+
+        if (!thisTimeslot)
+            return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
+
+        req.body.company = req.user.id
+
+        const updateTimeslot = await Timeslot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
+
+        res.status(200).json({success : true , timeslot : updateTimeslot})
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false , msg : "Something Wrong"})
+    }
+}
+
+exports.deleteTimeslot = async (req , res , next) => {
+    try {
+
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+
+        if (req.params.id !== req.user.id)
+            return res.status(400).json({success : false , msg : "Please use correct company account to delete this time slot"})
+    
+        const thisTimeslot = await Timeslot.findById(req.params.timeslotid)
+    
+        if (!thisTimeslot)
+            return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
+
+        const deleteTimeslot = await Timeslot.findByIdAndDelete(req.params.timeslotid)
+
+        res.status(200).json({success : true , timeslot : {}})
     }
     catch(err) {
         console.error(err)
