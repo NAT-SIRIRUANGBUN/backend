@@ -213,12 +213,12 @@ exports.deleteTimeslot = async (req , res , next) => {
         if (req.params.id !== req.user.id)
             return res.status(400).json({success : false , msg : "Please use correct company account to delete this time slot"})
     
-        const thisTimeslot = await Timeslot.findById(req.params.timeslotid)
+        const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
     
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
 
-        const deleteTimeslot = await TimeSlot.findByIdAndDelete(req.params.timeslotid)
+        const deleteTimeslot = await (await TimeSlot.findById(req.params.timeslotid)).deleteOne()
 
         res.status(200).json({success : true , timeslot : {}})
     }

@@ -132,5 +132,9 @@ TimeSlotSchema.pre('save' , async function (next) {
     const updateCompanyTimeslotList = await mongoose.model('Company',CompanySchema).findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
 })
 
+TimeSlotSchema.pre('deleteOne' , {document : true , query : false} , async function (next) {
+    const removeThisTimeSlotFromCompany = await mongoose.model('Company',CompanySchema).findByIdAndUpdate(this.company , {$pull : {timeslot : this.id}})
+})
+
 module.exports.TimeSlot = mongoose.model('TimeSlot',TimeSlotSchema);
 
