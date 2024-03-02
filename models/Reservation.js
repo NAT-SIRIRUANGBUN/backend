@@ -16,8 +16,8 @@ const ReservationSchema = new mongoose.Schema({
 
 ReservationSchema.pre('save' , async function (next) {
     try{
-        const updateTimeslot = await TimeSlot.findByIdAndUpdate(this.timeslot , {"$push" : {"participants" : this.user}})
-        const updateUser = await User.findByIdAndUpdate(this.user , {"$push" : {"reservation" : this.timeslot}})
+        const updateTimeslot = await TimeSlot.findByIdAndUpdate(this.timeslot , {"$push" : {"participants" : this.id}})
+        const updateUser = await User.findByIdAndUpdate(this.user , {"$push" : {"reservation" : this.id}})
     }catch(err){
         console.error(err);
     }
