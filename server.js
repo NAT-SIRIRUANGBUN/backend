@@ -23,6 +23,9 @@ app.use('/api/companies' , companies)
 const timeslot = require('./routes/timeslot')
 app.use('/api/timeslot' , timeslot)
 
+const reservation = require('./routes/reservation')
+app.use('/api/reservation',reservation)
+
 
 
 

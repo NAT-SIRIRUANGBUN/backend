@@ -4,6 +4,7 @@ const Company = require('./Company')
 const TimeSlotSchema = new mongoose.Schema({
     company: {
         type: mongoose.Schema.ObjectId,
+        ref: 'Company',
         required: [true , "Please provide company id"]
     },
     date: {
@@ -29,10 +30,15 @@ const TimeSlotSchema = new mongoose.Schema({
     description: {
         type: String
     }
-})
+}   
+);
 
 TimeSlotSchema.pre('save' , async function (next) {
-    const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
+    try{
+        const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
+    }catch(error){
+        console.error(err);
+    }
 })
 
 module.exports=mongoose.model('Timeslot',TimeSlotSchema);
