@@ -16,7 +16,7 @@ exports.getTimeslots = async (req , res , next) => {
 
 exports.getTimeslot = async (req , res , next) => {
     try {
-        const timeslot = await Timeslot.findById(req.params.id).populate({
+        const timeslot = await TimeSlot.findById(req.params.id).populate({
             path: 'company',
             select: 'name tel contact_email'
         });
