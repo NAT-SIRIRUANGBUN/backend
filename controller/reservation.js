@@ -140,10 +140,8 @@ exports.deleteReservation = async(req,res,next)=>{
 
         //Cascade Delete
         const removeReservationFromUser = await User.findByIdAndUpdate(reservation.user , {$pull : {reservation : req.params.id}})
-        // console.log(removeReservationFromUser)
 
         const removeReservationFromTimeSlot = await TimeSlot.findByIdAndUpdate(reservation.timeslot , {$pull : {reservation : req.params.id}})
-        // console.log(removeReservationFromTimeSlot)
 
         await reservation.deleteOne();
 

@@ -137,9 +137,6 @@ exports.deleteCompany = async (req,res,next) => {
         if (req.params.id !== req.user.id) 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
-
-        //Cascade delete time slot
-        // console.log(thisCompany.timeslot)
         await cascadeDeleteTimeSlot(thisCompany.timeslot)
 
         await thisCompany.deleteOne()
@@ -246,19 +243,17 @@ exports.deleteTimeslot = async (req , res , next) => {
 }
 
 async function cascadeDeleteTimeSlot(timeSlotIdList) {
-    // console.log(timeSlotIdList)
+
     const tmp = await TimeSlot.find({_id : {$in : timeSlotIdList}})
-    // console.log(tmp)
+
     const thisReservationNotClean = (await TimeSlot.find({_id : {$in : timeSlotIdList}}).select({reservation : 1 , _id : 0})).map(x => x.reservation)
-    // console.log(thisReservationNotClean)
+
     const reservationIdList = []
 
     for (let i = 0 ;  i < thisReservationNotClean.length ; i++) {
         for (let j = 0 ; j < thisReservationNotClean[i].length ; j++)
             reservationIdList.push(thisReservationNotClean[i][j])
     }
-
-    // console.log(reservationIdList)
 
     const allUserIdUnclean = (await Reservation.find({_id : {$in : reservationIdList}}).select({_id : 0 , user : 1})).map(x => x.user)
     let dict = {}
@@ -271,7 +266,6 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
         }
     }
 
-    // console.log(allUserId)
     const removeReservationFromUser = await User.updateMany({_id : {$in : allUserId}} , {$pull : {reservation : {$in : reservationIdList}}})
     const RemoveReservation = await Reservation.deleteMany({_id : {$in : reservationIdList}})
     
