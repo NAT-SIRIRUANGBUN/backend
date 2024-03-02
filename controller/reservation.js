@@ -28,7 +28,7 @@ exports.getReservations = async (req,res,next)=>{
             data: reservations
         });
     }catch(error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({success:false , message: "Cannot find Reservation"});
     }
 };
@@ -49,7 +49,7 @@ exports.getReservation = async(req,res,next) => {
             data: reservation
         });
     } catch (error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({success:false,message:"Cannot find reservation"});
     }
 };
@@ -72,7 +72,7 @@ exports.addReservation = async(req,res,next)=>{
             data: reservation
         });
     }catch(error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({success:false,message:"Cannot create Reservation"});
     }
 };
@@ -95,7 +95,7 @@ exports.updateReservation = async(req,res,next)=>{
             data: reservation
         });
     }catch(error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({success:false,message:"Cannot update Reservation"});
     }
 };
@@ -118,7 +118,7 @@ exports.deleteReservation = async(req,res,next)=>{
             data: {}
         });
     }catch (error){
-        console.log(error);
+        console.error(error);
         return res.status(500).json({success:false,message:"Cannot delete Reservation"});
     }
 };
