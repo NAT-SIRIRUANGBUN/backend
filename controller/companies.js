@@ -100,14 +100,19 @@ exports.createCompany = async (req,res,next) => {
 //@access Private
 exports.updateCompany = async (req,res,next) => {
     try {
+
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+
+        if (req.params.id !== req.user.id) 
+            return res.status(400).json({success : false , msg : "Please use correct company account to update this company info"})
+
         const company = await Company.findByIdAndUpdate(req.params.id, req.body, {
             new: true ,
             runValidators: true
         });
-
-        if(!company){
-            res.status(404).json({success: false , msg : "Can not find company with id : " + req.params.id});
-        }
 
         res.status(200).json({success:true, data: company});
     } catch (err) {
@@ -121,14 +126,19 @@ exports.updateCompany = async (req,res,next) => {
 //@access Private
 exports.deleteCompany = async (req,res,next) => {
     try {
-        const company = await Company.findById(req.params.id)
-        if(!company) {
-            return res.status(404).json({success:false , msg : "Can not find company with id : " + req.params.id});
-        }
 
-        await company.deleteOne()
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+
+        if (req.params.id !== req.user.id) 
+            return res.status(400).json({success : false , msg : "Please use correct company account to update this company info"})
+
+        await thisCompany.deleteOne()
 
         res.status(200).json({success: true , data: {}});
+        
     } catch (err) {
         console.error(err);
         res.status(400).json({success: false , msg : "Something Wrong"});
