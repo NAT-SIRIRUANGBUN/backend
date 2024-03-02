@@ -1,5 +1,5 @@
 const User = require('../models/User')
-const Company = require('../models/Company')
+const {Company} = require('../models/Company')
 
 
 //@desc     Register new user

@@ -1,8 +1,8 @@
-const Timeslot = require('../models/TimeSlot')
+const {TimeSlot} = require('../models/Company')
 
 exports.getTimeslots = async (req , res , next) => {
     try {
-        const timeslot = await Timeslot.find().populate({
+        const timeslot = await TimeSlot.find().populate({
             path: 'company',
             select: 'name tel contact_email'
         });

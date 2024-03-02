@@ -1,5 +1,5 @@
-const Company = require('../models/Company');
-const Timeslot = require('../models/TimeSlot')
+const {Company , TimeSlot} = require('../models/Company');
+
 //@DESC Get all companys
 //@route GET /api/v1/companies
 //@access Public
@@ -164,7 +164,7 @@ exports.createTimeslot = async (req , res , next) => {
             return res.status(400).json({success : false , msg : "Please use correct company account to create this time slot"})
         
         req.body.company = req.user.id
-        const newTimeslot = await Timeslot.create(req.body)
+        const newTimeslot = await TimeSlot.create(req.body)
         
         res.status(200).json({success : true , timeslot : newTimeslot})
     }
@@ -185,14 +185,14 @@ exports.updateTimeslot = async (req , res , next) => {
         if (req.params.id !== req.user.id) 
             return res.status(400).json({success : false , msg : "Please use correct company account to update this timeslot"})
         
-        const thisTimeslot = await Timeslot.findById(req.params.timeslotid)
+        const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
 
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
 
         req.body.company = req.user.id
 
-        const updateTimeslot = await Timeslot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
+        const updateTimeslot = await TimeSlot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
 
         res.status(200).json({success : true , timeslot : updateTimeslot})
     }
@@ -218,7 +218,7 @@ exports.deleteTimeslot = async (req , res , next) => {
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
 
-        const deleteTimeslot = await Timeslot.findByIdAndDelete(req.params.timeslotid)
+        const deleteTimeslot = await TimeSlot.findByIdAndDelete(req.params.timeslotid)
 
         res.status(200).json({success : true , timeslot : {}})
     }

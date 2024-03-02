@@ -1,7 +1,6 @@
 const mongoose = require('mongoose') ;
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
-const {DeleteDepTimeSlot} = require('../middleware/schemadep2')
 
 const CompanySchema = new mongoose.Schema({
     name: {
@@ -79,13 +78,59 @@ CompanySchema.methods.matchPassword = async function(enteredPassword) {
 
 CompanySchema.pre('deleteOne' , {document : true , query : false} , async function(next){
     try{
-        DeleteDepTimeSlot(this.timeslot)
+        let idlist = []
+        for (let i = 0 ; i < this.timeslot.length ; i++)
+            idlist.push(this.timeslot[i])
+        
+        for (let i = 0 ; i < idlist.length ; i++){
+            const removeTimeSlot = await mongoose.model('TimeSlot' , TimeSlotSchema).findByIdAndDelete(idlist[i])
+        }
+
     }catch(error){
         console.error(error);
     }
 })
 
-module.exports=mongoose.model('Company',CompanySchema);
+module.exports.Company = mongoose.model('Company',CompanySchema);
 
 
+const TimeSlotSchema = new mongoose.Schema({
+    company: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Company',
+        required: [true , "Please provide company id"]
+    },
+    date: {
+        type: Date,
+        required: [true , "Please provide date"]
+    },
+    startTime: {
+        type: String,
+        required: [true , "Please provide Start Time"]
+    },
+    endTime: {
+        type: String,
+        required: [true , "Please provide End Time"]
+    },
+    capacity: {
+        type: Number,
+        required: [true , "Please provide capacity"]
+    },
+    reservation: {
+        type: [{
+            type:mongoose.Schema.ObjectId,
+            ref: "Reservation"
+        }]
+    },
+    description: {
+        type: String
+    }
+}   
+);
+
+TimeSlotSchema.pre('save' , async function (next) {
+    const updateCompanyTimeslotList = await mongoose.model('Company',CompanySchema).findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
+})
+
+module.exports.TimeSlot = mongoose.model('TimeSlot',TimeSlotSchema);
 

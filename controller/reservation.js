@@ -1,6 +1,5 @@
 const Reservation = require('../models/Reservation');
-const Company = require('../models/Company');
-const TimeSlot = require('../models/TimeSlot');
+const {Company , TimeSlot} = require('../models/Company');
 const User = require('../models/User')
 
 exports.getReservations = async (req,res,next)=>{

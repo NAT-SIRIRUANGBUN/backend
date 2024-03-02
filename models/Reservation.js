@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const TimeSlot = require('./TimeSlot');
+const {TimeSlot} = require('./Company');
 const User = require('./User');
 const Reservastion = require('./Reservation')
 
