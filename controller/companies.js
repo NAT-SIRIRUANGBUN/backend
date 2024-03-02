@@ -53,7 +53,7 @@ exports.getCompanies = async (req,res,next) => {
         }
         res.status(200).json({success:true, count:companies.length, data:companies});
     }catch(err){
-        console.error(error);
+        console.error(err);
         res.status(400).json({success:false});
     }
     
@@ -107,7 +107,7 @@ exports.updateCompany = async (req,res,next) => {
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
         if (req.params.id !== req.user.id) 
-            return res.status(400).json({success : false , msg : "Please use correct company account to update this company info"})
+            return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
         const company = await Company.findByIdAndUpdate(req.params.id, req.body, {
             new: true ,
@@ -133,12 +133,12 @@ exports.deleteCompany = async (req,res,next) => {
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
         if (req.params.id !== req.user.id) 
-            return res.status(400).json({success : false , msg : "Please use correct company account to update this company info"})
+            return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
         await thisCompany.deleteOne()
 
         res.status(200).json({success: true , data: {}});
-        
+
     } catch (err) {
         console.error(err);
         res.status(400).json({success: false , msg : "Something Wrong"});
@@ -171,7 +171,7 @@ exports.createTimeslot = async (req , res , next) => {
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
             
         if (req.params.id !== req.user.id) 
-            return res.status(400).json({success : false , msg : "Please use correct company account to create this time slot"})
+            return res.status(401).json({success : false , msg : "Please use correct company account to create this time slot"})
         
         req.body.company = req.user.id
         const newTimeslot = await TimeSlot.create(req.body)
@@ -193,7 +193,7 @@ exports.updateTimeslot = async (req , res , next) => {
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
 
         if (req.params.id !== req.user.id) 
-            return res.status(400).json({success : false , msg : "Please use correct company account to update this timeslot"})
+            return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
         
         const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
 
@@ -221,7 +221,7 @@ exports.deleteTimeslot = async (req , res , next) => {
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
         if (req.params.id !== req.user.id)
-            return res.status(400).json({success : false , msg : "Please use correct company account to delete this time slot"})
+            return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
     
         const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
     

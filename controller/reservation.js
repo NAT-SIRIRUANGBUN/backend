@@ -6,7 +6,7 @@ exports.getReservations = async (req,res,next)=>{
     try{
         let query;
         if(req.user.role == null || !req.user.role){
-            return res.status(403).json({success:false,msg:'Please login first before access this route'})
+            return res.status(401).json({success:false,msg:'Please login first before access this route'})
         }
         if(req.user.role !== 'admin'){
             query = Reservation.find({user:req.user.id})
