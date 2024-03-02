@@ -86,3 +86,20 @@ exports.deleteCompany = async (req,res,next) => {
             res.status(400).json({success: false});
     }
 };
+
+exports.getTimeSlot = async (req , res , next) => {
+    try {
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+        
+        const timeslot = thisCompany.timeslot
+        
+        res.status(200).json({success : true , timeslot})
+    }
+    catch(err) {
+        console.error(err)
+        res.statis(400).json({msg : "Something Wrong"})
+    }
+}
