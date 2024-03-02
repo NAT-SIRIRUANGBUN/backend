@@ -3,26 +3,30 @@ const {Company , TimeSlot} = require('../models/Company');
 const User = require('../models/User')
 
 exports.getReservations = async (req,res,next)=>{
-    let query;
-    if(req.user.role !== 'admin'){
-        query = Reservation.find({user:req.user.id})
-        query = query.populate({
-            path: 'timeslot',
-            select: 'company date startTime endTime'
-        });
-    }else{
-        if(req.params.companyId){
-            query = Reservation.find({company: req.params.companyId}).populate({
+    
+
+    try{
+        let query;
+        if(req.user.role == null || !req.user.role){
+            return res.status(403).json({success:false,msg:'Please login first before access this route'})
+        }
+        if(req.user.role !== 'admin'){
+            query = Reservation.find({user:req.user.id})
+            query = query.populate({
                 path: 'timeslot',
                 select: 'company date startTime endTime'
             });
-        }else query = Reservation.find().populate({
-            path: 'timeslot',
-            select: 'company date startTime endTime'
-        });
-    }
-
-    try{
+        }else{
+            if(req.params.companyId){
+                query = Reservation.find({company: req.params.companyId}).populate({
+                    path: 'timeslot',
+                    select: 'company date startTime endTime'
+                });
+            }else query = Reservation.find().populate({
+                path: 'timeslot',
+                select: 'company date startTime endTime'
+            });
+        }
         const reservations = await query;
         res.status(200).json({
             success:true,
