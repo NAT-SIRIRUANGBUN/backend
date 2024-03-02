@@ -24,7 +24,7 @@ const TimeSlotSchema = new mongoose.Schema({
         required: [true , "Please provide capacity"]
     },
     reservation: {
-        type: [{uid:mongoose.Schema.ObjectId}]
+        type: [{type:mongoose.Schema.ObjectId}]
     },
     description: {
         type: String

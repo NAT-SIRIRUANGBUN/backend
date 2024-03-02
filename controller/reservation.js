@@ -1,6 +1,7 @@
 const Reservation = require('../models/Reservation');
 const Company = require('../models/Company');
 const TimeSlot = require('../models/TimeSlot');
+const User = require('../models/User')
 
 exports.getReservations = async (req,res,next)=>{
     let query;
@@ -62,8 +63,8 @@ exports.addReservation = async(req,res,next)=>{
         if(!timeslot){
             return res.status(404).json({success:false, message: `No timeslot with the id of ${req.params.timeslotId}`});
         }
-        const existedReservation = await Reservation.find({user:req.user.id});
-        if(existedReservation.length >= 3 && req.user.role !== 'admin'){
+        const ThisUser = await User.findById(req.user.id);
+        if(ThisUser.reservation.length >= 3 && req.user.role !== 'admin'){
             return res.status(400).json({success:false,message:`The user with ID ${req.user.id} has already made 3 reservation`});
         }
         const reservation = await Reservation.create({
