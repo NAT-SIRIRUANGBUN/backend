@@ -54,7 +54,7 @@ const CompanySchema = new mongoose.Schema({
         enum: ['S' , 'M' , 'L']
     },
     timeslot: {
-        type: [{tid:mongoose.Schema.ObjectId}]
+        type: [{type:mongoose.Schema.ObjectId}]
     }
 });
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose') ;
+const Company = require('./Company')
 
 const TimeSlotSchema = new mongoose.Schema({
     company: {
@@ -28,6 +29,11 @@ const TimeSlotSchema = new mongoose.Schema({
     description: {
         type: String
     }
+})
+
+TimeSlotSchema.pre('save' , async function (next) {
+    // const thisCompany = await Company.findById(this.company)
+    const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
 })
 
 module.exports=mongoose.model('Timeslot',TimeSlotSchema);
