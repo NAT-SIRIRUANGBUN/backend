@@ -3,8 +3,6 @@ const {Company , TimeSlot} = require('../models/Company');
 const User = require('../models/User')
 
 exports.getReservations = async (req,res,next)=>{
-    
-
     try{
         let query;
         if(req.user.role == null || !req.user.role){
@@ -84,9 +82,12 @@ exports.addReservation = async(req,res,next)=>{
 
         if (isReserveThisTimeslot)
             return res.status(400).json({success : false , msg : "You are already reserved this timeslot"})
-
+        
+        if(timeslot.reservation.length >= timeslot.capacity){
+            return res.status(400).json({success:false , msg : "The participant have already exceeded its capacity"});
+        }
         if(ThisUser.reservation.length >= 3 && req.user.role !== 'admin'){
-            return res.status(400).json({success:false,message:`The user with ID ${req.user.id} has already made 3 reservation`});
+            return res.status(400).json({success:false,msg:`The user with ID ${req.user.id} has already made 3 reservation`});
         }
         const reservation = await Reservation.create({
             user : req.user.id,
