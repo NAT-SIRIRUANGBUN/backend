@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
     tel: {
         type: String ,
         required: [true , 'Please add a Tel.'] ,
-        minlength: 10
+        match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im]
     },
     reservation: {
         type: []

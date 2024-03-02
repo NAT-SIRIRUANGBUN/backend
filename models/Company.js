@@ -23,7 +23,7 @@ const CompanySchema = new mongoose.Schema({
     tel: {
         type: String ,
         required: [true , "Please provide telephone number"],
-        match: [/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/]
+        match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im]
     },
     contact_email: {
         type: String ,
