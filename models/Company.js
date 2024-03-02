@@ -22,7 +22,8 @@ const CompanySchema = new mongoose.Schema({
     },
     tel: {
         type: String ,
-        required: [true , "Please provide telephone number"]
+        required: [true , "Please provide telephone number"],
+        match: [/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/]
     },
     contact_email: {
         type: String ,
