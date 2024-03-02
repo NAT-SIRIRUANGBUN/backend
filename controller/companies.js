@@ -167,7 +167,11 @@ exports.getCompanyTimeSlot = async (req , res , next) => {
 
 exports.createTimeslot = async (req , res , next) => {
     try {
-        
+
+        if (req.params.id !== req.user.id) {
+            return res.status(400).json({success : false , msg : "Please use correct company account to create this time slot"})
+        }
+        req.body.company = req.user.id
         const newTimeslot = await Timeslot.create(req.body)
         
         res.status(200).json({success : true , timeslot : newTimeslot})
