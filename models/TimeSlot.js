@@ -39,7 +39,7 @@ TimeSlotSchema.pre('save' , async function (next) {
     try{
         const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
     }catch(error){
-        console.error(err);
+        console.error(error);
     }
 })
 

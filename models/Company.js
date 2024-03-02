@@ -1,6 +1,7 @@
 const mongoose = require('mongoose') ;
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const TimeSlot = require('./TimeSlot');
 
 const CompanySchema = new mongoose.Schema({
     name: {
@@ -75,5 +76,15 @@ CompanySchema.methods.getSignedJwtToken=function(){
 CompanySchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword , this.password) ;
 }
+
+CompanySchema.pre('findByIdAndDelete',{document : true , query : false} , async function(next){
+    try{
+        for(let i = 0 ; i < timeslot.length ; i++){
+            const deleteTimeSlot = await TimeSlot.findByIdAndDelete(this.timeslot[i]);
+        }
+    }catch(error){
+        console.error(error);
+    }
+})
 
 module.exports=mongoose.model('Company',CompanySchema);
