@@ -11,7 +11,7 @@ const ReservationSchema = new mongoose.Schema({
     },
     timeslot: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Timeslot',
+        ref: 'TimeSlot',
         required: [true, "Please provide timeslot id"]
     }
 })
