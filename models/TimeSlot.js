@@ -1,5 +1,5 @@
 const mongoose = require('mongoose') ;
-const Company = require('./Company')
+const {AddTimeSlotToCompany} = require('../middleware/schemadep')
 
 const TimeSlotSchema = new mongoose.Schema({
     company: {
@@ -36,11 +36,7 @@ const TimeSlotSchema = new mongoose.Schema({
 );
 
 TimeSlotSchema.pre('save' , async function (next) {
-    try{
-        const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
-    }catch(error){
-        console.error(error);
-    }
+    AddTimeSlotToCompany(this.company , this.id)
 })
 
 module.exports=mongoose.model('Timeslot',TimeSlotSchema);
