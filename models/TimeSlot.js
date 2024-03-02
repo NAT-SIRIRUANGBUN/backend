@@ -32,7 +32,6 @@ const TimeSlotSchema = new mongoose.Schema({
 })
 
 TimeSlotSchema.pre('save' , async function (next) {
-    // const thisCompany = await Company.findById(this.company)
     const updateCompanyTimeslotList = await Company.findByIdAndUpdate(this.company , {"$push" : {"timeslot" : this.id}})
 })
 

@@ -10,7 +10,6 @@ exports.getReservations = async (req,res,next)=>{
         });
     }else{
         if(req.params.companyId){
-            console.log(req.params.companyId);
             query = Reservation.find({company: req.params.companyId}).populate({
                 path: "company",
                 select: "name address tel contact_email"
