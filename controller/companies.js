@@ -1,5 +1,5 @@
 const Company = require('../models/Company');
-
+const Timeslot = require('../models/TimeSlot')
 //@DESC Get all companys
 //@route GET /api/v1/companies
 //@access Public
@@ -123,17 +123,10 @@ exports.getCompanyTimeSlot = async (req , res , next) => {
 
 exports.createTimeslot = async (req , res , next) => {
     try {
-        // req.body.startTime.setDate(req.body.date)
-        console.log(req.body.startTime)
-        const date = new Date(req.body.date)
-        let startTime = new Date(req.body.startTime)
-        let endTime = new Date(req.body.endTime)
+        
+        const newTimeslot = await Timeslot.create(req.body)
+        console.log(newTimeslot)
 
-        // startTime.setDate(date.getDate())
-        // endTime.setDate(date.getDate())
-        console.log(date , startTime , endTime)
-        // console.log(typeof(req.body.startTime))
-        // console.log(req.body)
     }
     catch(err) {
         console.error(err)

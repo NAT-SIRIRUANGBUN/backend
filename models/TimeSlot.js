@@ -10,11 +10,11 @@ const TimeSlotSchema = new mongoose.Schema({
         required: [true , "Please provide date"]
     },
     startTime: {
-        type: Date,
+        type: String,
         required: [true , "Please provide Start Time"]
     },
     endTime: {
-        type: Date,
+        type: String,
         required: [true , "Please provide End Time"]
     },
     capacity: {
