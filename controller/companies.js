@@ -1,6 +1,7 @@
 const {Company , TimeSlot} = require('../models/Company');
 const Reservation = require('../models/Reservation');
 const User = require('../models/User')
+const mongoose = require('mongoose')
 //@DESC Get all companys
 //@route GET /api/v1/companies
 //@access Public
@@ -138,9 +139,8 @@ exports.deleteCompany = async (req,res,next) => {
 
 
         //Cascade delete time slot
-        for (let i = 0 ; i < thisCompany.timeslot.length ; i++) {
-            await cascadeDeleteTimeSlot(thisCompany.timeslot[i])
-        }
+        // console.log(thisCompany.timeslot)
+        await cascadeDeleteTimeSlot(thisCompany.timeslot)
 
         await thisCompany.deleteOne()
 
@@ -157,7 +157,7 @@ exports.getCompanyTimeSlot = async (req , res , next) => {
         const thisCompany = await Company.findById(req.params.id)
 
         if (!thisCompany)
-            res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
         
         const timeslot = thisCompany.timeslot
 
@@ -234,9 +234,8 @@ exports.deleteTimeslot = async (req , res , next) => {
     
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
-
-        // const deleteTimeslot = await (await TimeSlot.findById(req.params.timeslotid)).deleteOne()
-        cascadeDeleteTimeSlot(req.params.timeslotid)
+        
+        cascadeDeleteTimeSlot(new mongoose.Types.ObjectId(req.params.timeslotid))
 
         res.status(200).json({success : true , timeslot : {}})
     }
@@ -246,21 +245,35 @@ exports.deleteTimeslot = async (req , res , next) => {
     }
 }
 
-async function cascadeDeleteTimeSlot(timeSlotId) {
-    const thisTimeSlot = await TimeSlot.findById(timeSlotId)
+async function cascadeDeleteTimeSlot(timeSlotIdList) {
+    // console.log(timeSlotIdList)
+    const tmp = await TimeSlot.find({_id : {$in : timeSlotIdList}})
+    // console.log(tmp)
+    const thisReservationNotClean = (await TimeSlot.find({_id : {$in : timeSlotIdList}}).select({reservation : 1 , _id : 0})).map(x => x.reservation)
+    // console.log(thisReservationNotClean)
+    const reservationIdList = []
 
-    let reservationList = thisTimeSlot.reservation
-
-    for (let i = 0 ; i < reservationList.length ; i++) {
-        let thisReservationId = reservationList[i]
-
-        let thisReservation = await Reservation.findById(thisReservationId)
-
-        let thisUserId = thisReservation.user
-        
-        const removeReservationFromUser = await User.findByIdAndUpdate(thisUserId , {$pull : {reservation : thisReservationId}})
-        const deleteThisReservation = await thisReservation.deleteOne()
+    for (let i = 0 ;  i < thisReservationNotClean.length ; i++) {
+        for (let j = 0 ; j < thisReservationNotClean[i].length ; j++)
+            reservationIdList.push(thisReservationNotClean[i][j])
     }
 
-    await thisTimeSlot.deleteOne()
+    // console.log(reservationIdList)
+
+    const allUserIdUnclean = (await Reservation.find({_id : {$in : reservationIdList}}).select({_id : 0 , user : 1})).map(x => x.user)
+    let dict = {}
+    let allUserId = []
+
+    for (let i = 0 ; i < allUserIdUnclean.length ; i++) {
+        if (!dict[allUserIdUnclean[i]]) {
+            allUserId.push(allUserIdUnclean[i])
+            dict[allUserIdUnclean[i]] = true
+        }
+    }
+
+    // console.log(allUserId)
+    const removeReservationFromUser = await User.updateMany({_id : {$in : allUserId}} , {$pull : {reservation : {$in : reservationIdList}}})
+    const RemoveReservation = await Reservation.deleteMany({_id : {$in : reservationIdList}})
+    
+    await TimeSlot.deleteMany({_id : {$in : timeSlotIdList}})
 }
