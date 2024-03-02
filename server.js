@@ -20,6 +20,9 @@ app.use('/api/auth' , auth)
 const companies = require('./routes/companies')
 app.use('/api/companies' , companies)
 
+const timeslot = require('./routes/timeslot')
+app.use('/api/timeslot' , timeslot)
+
 
 
 

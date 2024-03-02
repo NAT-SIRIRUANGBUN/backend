@@ -87,7 +87,7 @@ exports.deleteCompany = async (req,res,next) => {
     }
 };
 
-exports.getTimeSlot = async (req , res , next) => {
+exports.getTimeSlots = async (req , res , next) => {
     try {
         const thisCompany = await Company.findById(req.params.id)
 
@@ -101,5 +101,42 @@ exports.getTimeSlot = async (req , res , next) => {
     catch(err) {
         console.error(err)
         res.statis(400).json({msg : "Something Wrong"})
+    }
+}
+
+exports.getCompanyTimeSlot = async (req , res , next) => {
+    try {
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+        
+        const timeslot = thisCompany.timeslot
+
+        res.status(200).json({success : true , timeslot})
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({msg : "Something Wrong"})
+    }
+}
+
+exports.createTimeslot = async (req , res , next) => {
+    try {
+        // req.body.startTime.setDate(req.body.date)
+        console.log(req.body.startTime)
+        const date = new Date(req.body.date)
+        let startTime = new Date(req.body.startTime)
+        let endTime = new Date(req.body.endTime)
+
+        // startTime.setDate(date.getDate())
+        // endTime.setDate(date.getDate())
+        console.log(date , startTime , endTime)
+        // console.log(typeof(req.body.startTime))
+        // console.log(req.body)
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false , msg : "Something Wrong"})
     }
 }
