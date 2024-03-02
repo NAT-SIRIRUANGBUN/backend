@@ -1,5 +1,5 @@
 const Company = require('../models/Company');
-
+const Timeslot = require('../models/TimeSlot')
 //@DESC Get all companys
 //@route GET /api/v1/companies
 //@access Public
@@ -131,7 +131,7 @@ exports.deleteCompany = async (req,res,next) => {
     }
 };
 
-exports.getTimeSlot = async (req , res , next) => {
+exports.getTimeSlots = async (req , res , next) => {
     try {
         const thisCompany = await Company.findById(req.params.id)
 
@@ -145,5 +145,35 @@ exports.getTimeSlot = async (req , res , next) => {
     catch(err) {
         console.error(err)
         res.statis(400).json({msg : "Something Wrong"})
+    }
+}
+
+exports.getCompanyTimeSlot = async (req , res , next) => {
+    try {
+        const thisCompany = await Company.findById(req.params.id)
+
+        if (!thisCompany)
+            res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
+        
+        const timeslot = thisCompany.timeslot
+
+        res.status(200).json({success : true , timeslot})
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({msg : "Something Wrong"})
+    }
+}
+
+exports.createTimeslot = async (req , res , next) => {
+    try {
+        
+        const newTimeslot = await Timeslot.create(req.body)
+        console.log(newTimeslot)
+
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false , msg : "Something Wrong"})
     }
 }

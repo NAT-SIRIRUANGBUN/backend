@@ -1,16 +1,20 @@
-const mongoose = requie('mongoose') ;
+const mongoose = require('mongoose') ;
 
 const TimeSlotSchema = new mongoose.Schema({
+    company: {
+        type: mongoose.Schema.ObjectId,
+        required: [true , "Please provide company id"]
+    },
     date: {
         type: Date,
         required: [true , "Please provide date"]
     },
     startTime: {
-        type: Time,
+        type: String,
         required: [true , "Please provide Start Time"]
     },
     endTime: {
-        type: Time,
+        type: String,
         required: [true , "Please provide End Time"]
     },
     capacity: {
@@ -19,9 +23,10 @@ const TimeSlotSchema = new mongoose.Schema({
     },
     participants: {
         type: [{uid:mongoose.Schema.ObjectId}],
-        required: [true , "Please provide participants"]
     },
     description: {
         type: String
     }
 })
+
+module.exports=mongoose.model('Timeslot',TimeSlotSchema);
