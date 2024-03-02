@@ -136,6 +136,12 @@ exports.deleteCompany = async (req,res,next) => {
         if (req.params.id !== req.user.id) 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
+
+        //Cascade delete time slot
+        for (let i = 0 ; i < thisCompany.timeslot.length ; i++) {
+            await cascadeDeleteTimeSlot(thisCompany.timeslot[i])
+        }
+
         await thisCompany.deleteOne()
 
         res.status(200).json({success: true , data: {}});
@@ -247,11 +253,11 @@ async function cascadeDeleteTimeSlot(timeSlotId) {
 
     for (let i = 0 ; i < reservationList.length ; i++) {
         let thisReservationId = reservationList[i]
-        // console.log(thisReservationId)
+
         let thisReservation = await Reservation.findById(thisReservationId)
-        // console.log(thisReservation)
+
         let thisUserId = thisReservation.user
-        // console.log(thisUserId)
+        
         const removeReservationFromUser = await User.findByIdAndUpdate(thisUserId , {$pull : {reservation : thisReservationId}})
         const deleteThisReservation = await thisReservation.deleteOne()
     }

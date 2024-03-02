@@ -2,6 +2,7 @@ const mongoose = require('mongoose') ;
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 
+
 const CompanySchema = new mongoose.Schema({
     name: {
         type: String ,
@@ -76,23 +77,7 @@ CompanySchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword , this.password) ;
 }
 
-CompanySchema.pre('deleteOne' , {document : true , query : false} , async function(next){
-    try{
-        let idlist = []
-        for (let i = 0 ; i < this.timeslot.length ; i++)
-            idlist.push(this.timeslot[i])
-        
-        for (let i = 0 ; i < idlist.length ; i++){
-            const removeTimeSlot = await mongoose.model('TimeSlot' , TimeSlotSchema).findByIdAndDelete(idlist[i])
-        }
-
-    }catch(error){
-        console.error(error);
-    }
-})
-
 module.exports.Company = mongoose.model('Company',CompanySchema);
-
 
 const TimeSlotSchema = new mongoose.Schema({
     company: {
