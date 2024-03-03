@@ -9,11 +9,27 @@ exports.getReservations = async (req,res,next)=>{
             return res.status(401).json({success:false,msg:'Please login first before access this route'})
         }
         if(req.user.role !== 'admin'){
-            query = Reservation.find({user:req.user.id})
-            query = query.populate({
-                path: 'timeslot',
-                select: 'company date startTime endTime'
-            });
+            if (req.user.role === 'user') {
+            
+            query = User.findById(req.user.id).populate({
+                path: 'reservation', 
+                select: 'timeslot',
+                populate: {
+                  path: 'timeslot',
+                  model: 'TimeSlot',
+                  select: 'company date startTime endTime' 
+                }
+              });
+            }
+            else if (req.user.role === 'company') {
+                query = Company.findById(req.user.id).populate({
+                    path: 'timeslot',
+                    populate : {
+                        path : 'timeslot'
+                    }
+                })
+            }
+            
         }else{
             if(req.params.companyId){
                 query = Reservation.find({company: req.params.companyId}).populate({
@@ -33,7 +49,7 @@ exports.getReservations = async (req,res,next)=>{
         });
     }catch(error){
         console.error(error);
-        return res.status(500).json({success:false , message: "Cannot find Reservation"});
+        return res.status(500).json({success:false , msg: "Cannot find Reservation"});
     }
 };
 
@@ -43,9 +59,15 @@ exports.getReservation = async(req,res,next) => {
             path: 'timeslot',
             select: 'company date startTime endTime'
         });
-
+        console.log(reservation)
         if(!reservation){
-            return res.status(404).json({success:false,message: `No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,msg: `No reservation with the id of ${req.params.id}`});
+        }
+        if (req.user.role !== 'admin') {
+            if (req.user.role === 'company' && reservation.timeslot.company.toString() !== req.user.id)
+                return res.status(401).json({success : false , msg : "You are not the owner of the reservation"})
+            if (req.user.role === 'user' && reservation.user.toString() !== req.user.id) 
+                return res.status(401).json({success : false , msg : "You are not the owner of the reservation"})
         }
 
         res.status(200).json({
@@ -54,7 +76,7 @@ exports.getReservation = async(req,res,next) => {
         });
     } catch (error){
         console.error(error);
-        return res.status(500).json({success:false,message:"Cannot find reservation"});
+        return res.status(500).json({success:false,msg:"Cannot find reservation"});
     }
 };
 
@@ -107,10 +129,10 @@ exports.updateReservation = async(req,res,next)=>{
     try{
         let reservation = await Reservation.findById(req.params.id);
         if(!reservation){
-            return res.status(404).json({success:false,message:`No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,msg:`No reservation with the id of ${req.params.id}`});
         }
         if(reservation.user.toString()!== req.user.id && req.user.role !== 'admin'){
-            return res.status(401).json({success:false,message: `User ${req.user.id} is not authorized to update this reservation`});
+            return res.status(401).json({success:false,msg: `User ${req.user.id} is not authorized to update this reservation`});
         }
         reservation = await Reservation.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
@@ -122,7 +144,7 @@ exports.updateReservation = async(req,res,next)=>{
         });
     }catch(error){
         console.error(error);
-        return res.status(500).json({success:false,message:"Cannot update Reservation"});
+        return res.status(500).json({success:false,msg:"Cannot update Reservation"});
     }
 };
 
@@ -131,11 +153,11 @@ exports.deleteReservation = async(req,res,next)=>{
         const reservation = await Reservation.findById(req.params.id);
 
         if(!reservation){
-            return res.status(404).json({success:false,message: `No reservation with the id of ${req.params.id}`});
+            return res.status(404).json({success:false,msg: `No reservation with the id of ${req.params.id}`});
         }
         
         if(reservation.user.toString()!== req.user.id && req.user.role !== 'admin'){
-            return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to delete this reservation`});
+            return res.status(401).json({success:false,msg:`User ${req.user.id} is not authorized to delete this reservation`});
         }
 
         //Cascade Delete
@@ -151,6 +173,6 @@ exports.deleteReservation = async(req,res,next)=>{
         });
     }catch (error){
         console.error(error);
-        return res.status(500).json({success:false,message:"Cannot delete Reservation"});
+        return res.status(500).json({success:false,msg:"Cannot delete Reservation"});
     }
 };
