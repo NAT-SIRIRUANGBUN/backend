@@ -49,6 +49,9 @@ exports.login_user = async (req , res , next) => {
 //@access   Private
 exports.getRegUser = async (req , res , next) => {
     const user = await User.findById(req.user.id)
+    if(!user){
+        return res.status(404).json({success:false , msg:'Can not find this user'})
+    }
     res.status(200).json({
         success : true,
         data : user
