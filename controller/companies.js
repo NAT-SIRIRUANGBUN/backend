@@ -169,10 +169,10 @@ exports.getCompanyTimeSlot = async (req , res , next) => {
 exports.createTimeslot = async (req , res , next) => {
     try {
 
-        const thisCompany = await Company.findById(req.user.id)
+        const thisCompany = await Company.findById(req.params.id)
 
         if (!thisCompany)
-            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
             
         if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to create this time slot"})
@@ -191,10 +191,10 @@ exports.createTimeslot = async (req , res , next) => {
 exports.updateTimeslot = async (req , res , next) => {
     try {
 
-        const thisCompany = await Company.findById(req.user.id)
+        const thisCompany = await Company.findById(req.params.id)
 
         if (!thisCompany)
-            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
+            return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
         const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
 
