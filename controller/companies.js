@@ -74,7 +74,7 @@ exports.getCompany = async (req,res,next) => {
 
         res.status(200).json({success: true, data: company});
     } catch (err) {
-        console.error(error);
+        console.error(err);
         res.status(400).json({success: false , msg : "Something Wrong"});
     }
 };
@@ -118,7 +118,7 @@ exports.updateCompany = async (req,res,next) => {
 
         res.status(200).json({success:true, data: company});
     } catch (err) {
-        console.error(error);
+        console.error(err);
         res.status(400).json({success: false , msg : "Something Wrong"});
     }
 };

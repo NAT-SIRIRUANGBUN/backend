@@ -21,7 +21,7 @@ exports.protect = async (req , res , next) => {
         }
         next()
     }catch(err) {
-        console.error(err.stack)
+        console.error(err)
         return res.status(401).json({success : false , msg : "Faild to verify token or can not find user with provided token"})
     }
 }

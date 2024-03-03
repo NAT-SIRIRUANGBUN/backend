@@ -12,7 +12,7 @@ exports.register_user = async (req , res , next) => {
         sendTokenResponse(newuser , 200 , res)
     }
     catch(err) {
-        console.error(error);
+        console.error(err);
         res.status(400).json({success : false})
     }
 }
