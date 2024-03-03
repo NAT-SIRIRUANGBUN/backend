@@ -226,7 +226,21 @@ exports.updateTimeslot = async (req , res , next) => {
         if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
         
+        if(req.body.date){
+            let dateArray = req.body.date.split('-')
        
+            let dateArrayInt = dateArray.map(str => {
+                return parseInt(str);
+              });
+            
+            const year = dateArrayInt[0];
+            const month = dateArrayInt[1];
+            const date = dateArrayInt[2];
+            if(year != 2022 || month != 5 || !(date >= 10 && date <= 13)){
+                return res.status(400).json({success:false , msg:'Timeslot date must be in range 2022-05-10 to 2022-05-13'})
+            }
+        }
+
         req.body.company = req.params.id
 
         const updateTimeslot = await TimeSlot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
