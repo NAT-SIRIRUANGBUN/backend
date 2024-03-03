@@ -65,6 +65,10 @@ exports.getTimeslot = async (req , res , next) => {
             path: 'company',
             select: 'name tel contact_email'
         });
+
+        if (!timeslot)
+            return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.id});
+
         res.status(200).json({success : true , timeslot})
     }
     catch(err) {
