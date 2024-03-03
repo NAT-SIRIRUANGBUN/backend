@@ -180,7 +180,7 @@ exports.createTimeslot = async (req , res , next) => {
         req.body.company = req.user.id
         const newTimeslot = await TimeSlot.create(req.body)
         
-        res.status(200).json({success : true , timeslot : newTimeslot})
+        res.status(201).json({success : true , timeslot : newTimeslot})
     }
     catch(err) {
         console.error(err)

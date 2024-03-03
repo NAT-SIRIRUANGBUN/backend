@@ -93,7 +93,7 @@ exports.addReservation = async(req,res,next)=>{
             user : req.user.id,
             timeslot : req.params.timeslotId
         });
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             data: reservation
         });
