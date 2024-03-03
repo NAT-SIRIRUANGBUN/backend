@@ -255,7 +255,6 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
     
     if (timeSlotIdList.length == 1) {
         const deleteOnetimeSlot = await (await TimeSlot.findById(timeSlotIdList[0])).deleteOne()
-        return
     }
     const tmp = await TimeSlot.find({_id : {$in : timeSlotIdList}})
 
