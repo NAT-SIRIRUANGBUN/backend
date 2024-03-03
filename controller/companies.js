@@ -257,11 +257,6 @@ exports.deleteTimeslot = async (req , res , next) => {
 }
 
 async function cascadeDeleteTimeSlot(timeSlotIdList) {
-    
-    if (timeSlotIdList.length == 1) {
-        const deleteOnetimeSlot = await (await TimeSlot.findById(timeSlotIdList[0])).deleteOne()
-    }
-    const tmp = await TimeSlot.find({_id : {$in : timeSlotIdList}})
 
     const thisReservationNotClean = (await TimeSlot.find({_id : {$in : timeSlotIdList}}).select({reservation : 1 , _id : 0})).map(x => x.reservation)
 
@@ -286,7 +281,10 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
     const removeReservationFromUser = await User.updateMany({_id : {$in : allUserId}} , {$pull : {reservation : {$in : reservationIdList}}})
     const RemoveReservation = await Reservation.deleteMany({_id : {$in : reservationIdList}})
 
-    await TimeSlot.deleteMany({_id : {$in : timeSlotIdList}})
+    if (timeSlotIdList.length == 1) {
+        const deleteOnetimeSlot = await (await TimeSlot.findById(timeSlotIdList[0])).deleteOne()
+    }
+    else await TimeSlot.deleteMany({_id : {$in : timeSlotIdList}})
 }
 
 exports.getCompanyDetail = async (req , res , next) => {
