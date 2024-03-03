@@ -196,14 +196,18 @@ exports.updateTimeslot = async (req , res , next) => {
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
 
-        if (req.params.id !== req.user.id) 
-            return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
-        
         const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
 
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
+        
+        if (req.params.id !== thisTimeslot.company.toString())
+            return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
 
+        if (req.params.id !== req.user.id) 
+            return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
+        
+       
         req.body.company = req.user.id
 
         const updateTimeslot = await TimeSlot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
@@ -224,14 +228,18 @@ exports.deleteTimeslot = async (req , res , next) => {
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
-        if (req.params.id !== req.user.id)
-            return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
-    
         const thisTimeslot = await TimeSlot.findById(req.params.timeslotid)
     
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
         
+        if (req.params.id !== thisTimeslot.company.toString())
+            return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
+
+        if (req.params.id !== req.user.id)
+            return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
+    
+
         cascadeDeleteTimeSlot(new mongoose.Types.ObjectId(req.params.timeslotid))
 
         res.status(200).json({success : true , timeslot : {}})
