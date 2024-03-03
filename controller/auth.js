@@ -7,8 +7,7 @@ const {Company} = require('../models/Company')
 //@access   Public
 exports.register_user = async (req , res , next) => {
     try {
-        const {name , email , password , role , tel} = req.body
-        const newuser = await User.create({name , email , password , role , tel})
+        const newuser = await User.create(req.body)
         sendTokenResponse(newuser , 201 , res)
     }
     catch(err) {
