@@ -151,7 +151,12 @@ exports.deleteCompany = async (req,res,next) => {
 
 exports.getCompanyTimeSlot = async (req , res , next) => {
     try {
-        const thisCompany = await Company.findById(req.params.id)
+        const thisCompany = await Company.findById(req.params.id).populate({
+            path : 'timeslot',
+            populate : {
+                path : 'reservation'
+            }
+        })
 
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
