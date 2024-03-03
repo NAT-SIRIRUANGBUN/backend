@@ -24,12 +24,9 @@ exports.getReservations = async (req,res,next)=>{
             else if (req.user.role === 'company') {
                 query = Company.findById(req.user.id).populate({
                     path: 'timeslot',
-                    populate : {
-                        path : 'timeslot'
-                    }
-                })
+                    select: 'date startTime endTime reservation'
+                }).select({timeslot : 1 , _id : 0 })
             }
-            
         }else{
             if(req.params.companyId){
                 query = Reservation.find({company: req.params.companyId}).populate({
@@ -59,7 +56,6 @@ exports.getReservation = async(req,res,next) => {
             path: 'timeslot',
             select: 'company date startTime endTime'
         });
-        console.log(reservation)
         if(!reservation){
             return res.status(404).json({success:false,msg: `No reservation with the id of ${req.params.id}`});
         }
