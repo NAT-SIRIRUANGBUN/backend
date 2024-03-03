@@ -7,6 +7,7 @@ const CompanySchema = new mongoose.Schema({
     name: {
         type: String ,
         unique: true ,
+        index : true,
         trim: true ,
         maxlength: [255 , "Name can not be more then 255 characters"]
     },
@@ -35,6 +36,7 @@ const CompanySchema = new mongoose.Schema({
         type: String ,
         required:[true,'Please provide a login_email'],
         unique: true,
+        index : true,
         select: false,
         match: [/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ , 'Please add a valid email']
     },
