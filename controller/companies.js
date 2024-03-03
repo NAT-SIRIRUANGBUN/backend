@@ -174,7 +174,7 @@ exports.createTimeslot = async (req , res , next) => {
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.user.id})
             
-        if (req.params.id !== req.user.id) 
+        if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to create this time slot"})
         
         req.body.company = req.user.id
@@ -204,7 +204,7 @@ exports.updateTimeslot = async (req , res , next) => {
         if (req.params.id !== thisTimeslot.company.toString())
             return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
 
-        if (req.params.id !== req.user.id) 
+        if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
         
        
@@ -236,7 +236,7 @@ exports.deleteTimeslot = async (req , res , next) => {
         if (req.params.id !== thisTimeslot.company.toString())
             return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
 
-        if (req.params.id !== req.user.id)
+        if (req.params.id !== req.user.id && req.user.role !== 'admin')
             return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
     
 
