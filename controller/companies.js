@@ -233,15 +233,15 @@ exports.deleteTimeslot = async (req , res , next) => {
     
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
-        console.log(req.params.id , thisTimeslot.company.toString())
+
         if (req.params.id !== thisTimeslot.company.toString())
             return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
 
         if (req.params.id !== req.user.id && req.user.role !== 'admin')
             return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
     
-
-        cascadeDeleteTimeSlot(new mongoose.Types.ObjectId(req.params.timeslotid))
+        
+        cascadeDeleteTimeSlot([new mongoose.Types.ObjectId(req.params.timeslotid)])
 
         res.status(200).json({success : true , timeslot : {}})
     }
@@ -252,7 +252,11 @@ exports.deleteTimeslot = async (req , res , next) => {
 }
 
 async function cascadeDeleteTimeSlot(timeSlotIdList) {
-
+    
+    if (timeSlotIdList.length == 1) {
+        const deleteOnetimeSlot = await (await TimeSlot.findById(timeSlotIdList[0])).deleteOne()
+        return
+    }
     const tmp = await TimeSlot.find({_id : {$in : timeSlotIdList}})
 
     const thisReservationNotClean = (await TimeSlot.find({_id : {$in : timeSlotIdList}}).select({reservation : 1 , _id : 0})).map(x => x.reservation)
@@ -277,7 +281,7 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
 
     const removeReservationFromUser = await User.updateMany({_id : {$in : allUserId}} , {$pull : {reservation : {$in : reservationIdList}}})
     const RemoveReservation = await Reservation.deleteMany({_id : {$in : reservationIdList}})
-    
+
     await TimeSlot.deleteMany({_id : {$in : timeSlotIdList}})
 }
 

@@ -7,6 +7,6 @@ const router = express.Router()
 router.use('/:timeslotId/reservation/',reservationRouter);
 
 router.route('/').get(protect,authorize('user','admin'),getTimeslots)
-router.route('/:id').get(protect,authorize('user','admin'),getTimeslot)
+router.route('/:id').get(protect,authorize('user' , 'company' ,'admin'),getTimeslot)
 
 module.exports = router
