@@ -177,7 +177,8 @@ exports.createTimeslot = async (req , res , next) => {
         if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to create this time slot"})
         
-        req.body.company = req.user.id
+        req.body.company = req.params.id
+
         const newTimeslot = await TimeSlot.create(req.body)
         
         res.status(201).json({success : true , timeslot : newTimeslot})
