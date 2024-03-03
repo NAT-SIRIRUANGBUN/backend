@@ -184,13 +184,13 @@ exports.createTimeslot = async (req , res , next) => {
         
         req.body.company = req.params.id
 
-        console.log(req.body);
+        
         let dateArray = req.body.date.split('-')
-        console.log(dateArray);
+       
         let dateArrayInt = dateArray.map(str => {
             return parseInt(str);
           });
-        console.log(dateArrayInt);
+        
         const year = dateArrayInt[0];
         const month = dateArrayInt[1];
         const date = dateArrayInt[2];
