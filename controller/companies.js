@@ -279,3 +279,8 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
     
     await TimeSlot.deleteMany({_id : {$in : timeSlotIdList}})
 }
+
+exports.getCompanyDetail = async (req , res , next) => {
+    const thisCompany = await Company.findById(req.user.id)
+    res.status(200).json({success : true , data : thisCompany})
+}
