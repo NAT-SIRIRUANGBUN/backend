@@ -108,7 +108,7 @@ exports.updateCompany = async (req,res,next) => {
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
-        if (req.params.id !== req.user.id) 
+        if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
         const company = await Company.findByIdAndUpdate(req.params.id, req.body, {
@@ -134,7 +134,7 @@ exports.deleteCompany = async (req,res,next) => {
         if (!thisCompany)
             return res.status(404).json({success : false , msg : "Can not find company with id : " + req.params.id})
 
-        if (req.params.id !== req.user.id) 
+        if (req.params.id !== req.user.id && req.user.role !== 'admin') 
             return res.status(401).json({success : false , msg : "Please use correct company account to update this company info"})
 
         await cascadeDeleteTimeSlot(thisCompany.timeslot)
