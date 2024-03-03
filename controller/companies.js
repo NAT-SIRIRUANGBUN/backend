@@ -209,7 +209,7 @@ exports.updateTimeslot = async (req , res , next) => {
             return res.status(401).json({success : false , msg : "Please use correct company account to update this timeslot"})
         
        
-        req.body.company = req.user.id
+        req.body.company = req.params.id
 
         const updateTimeslot = await TimeSlot.findByIdAndUpdate(req.params.timeslotid , req.body , {new : true , runValidators : true})
 
@@ -233,7 +233,7 @@ exports.deleteTimeslot = async (req , res , next) => {
     
         if (!thisTimeslot)
             return res.status(404).json({success : false , msg : "Can not find timeslot with id : " + req.params.timeslotid})
-        
+        console.log(req.params.id , thisTimeslot.company.toString())
         if (req.params.id !== thisTimeslot.company.toString())
             return res.status(400).json({success : false , msg : "Timeslot id : " + req.params.timeslotid + "is not provided by Company with id :" + req.params.id})
 
