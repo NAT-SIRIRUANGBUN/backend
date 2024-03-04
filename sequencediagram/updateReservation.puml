@@ -48,8 +48,8 @@ group Loop
         modelReserv <-- mongoDB : reservation
         controllersReserv <-- modelReserv : reservation
 
-        controllersReserv -> modelUser : User.findById(req.user.id).populate\n({path:'reservation',select:'timeslot'})
-        modelUser -> mongoDB : find(req.user.id).populate\n({path:'reservation',select:'timeslot'})
+        controllersReserv -> modelUser : User.findById(reservation.user).populate\n({path:'reservation',select:'timeslot'})
+        modelUser -> mongoDB : find(reservation.user).populate\n({path:'reservation',select:'timeslot'})
         
         modelUser <-- mongoDB : user
         controllersReserv <-- modelUser : user
