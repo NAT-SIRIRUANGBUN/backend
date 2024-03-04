@@ -63,12 +63,12 @@ group Loop
         controllersReserv -> modelReserv : reservation.deleteOne()
         modelReserv -> mongoDB : deleteOne()
         
-        modelReserv <- mongoDB :return
-        controllersReserv <- modelReserv : return
-        routerReserv <- controllersReserv : return
-        server <- routerReserv : return
-        admin <- server : return
-        user <- server : return
+        modelReserv <-- mongoDB :return
+        controllersReserv <-- modelReserv : return
+        routerReserv <-- controllersReserv : return
+        server <-- routerReserv : return
+        admin <-- server : return
+        user <-- server : return
     end
 end
 
