@@ -5,7 +5,6 @@ const connectDB = require('./config/db')
 const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
 const {xss} = require('express-xss-sanitizer')
-const reateLimit = require('express-rate-limit')
 
 dotenv.config({path : './config/config.env'})
 
@@ -23,10 +22,7 @@ app.use(helmet());
 //Prevent XSS attacks
 app.use(xss());
 //Rate Limiting
-const limiter = rateLimit ({
-    windowMs: 10*60*1000, //10mins
-    max: 10000
-});
+
 app.use(limiter);
 
 
