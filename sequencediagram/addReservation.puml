@@ -1,0 +1,79 @@
+@startuml
+
+footer Page %page% of %lastpage%
+title "Create Reservation for user, admin and company"
+
+actor "User" as user
+actor "Admin" as admin
+actor "Company" as company
+participant "server" as server
+participant "<<router>>\ntimeslot" as routerTime
+participant "<<router>>\nreservation" as routerReserv
+participant "<<middleware>>\nauth" as middleAuth
+participant "<<controllers>>\nreservation" as controllersReserv
+participant "<<model>>\nTimeslot" as modelTimeslot
+participant "<<model>>\nUser" as modelUser
+participant "<<model>>\nReservation" as modelReserv
+participant "<<model>>\nCompany" as modelComp
+database "MongoDB" as mongoDB
+
+group Loop
+    'get reservations for user
+    group opt 
+        activate user
+        activate server
+        activate routerTime
+        activate routerReserv
+        activate middleAuth
+        activate controllersReserv
+        activate modelUser
+        activate modelReserv
+        activate mongoDB
+        activate admin
+        activate company
+        activate modelComp
+        activate modelTimeslot
+        user->server :addReservation\n(token,timeslotid)
+        admin -> server :addReservation\n(token,timeslotid)
+        server->routerTime :use('/api/timeslot'\n,timeslot)
+        routerTime->routerReserv : use('/:timeslotId/\nreservation/'\n,reservationRouter)
+        routerReserv -> middleAuth : protect(token)
+        middleAuth -> middleAuth : decode(token)
+        middleAuth -> modelUser : User.findBy(decodetoken)
+        modelUser -> mongoDB : findById(decodetoken)
+
+        modelUser <-- mongoDB : user
+        middleAuth <-- modelUser : user
+        routerReserv <-- middleAuth : next()
+
+        routerReserv -> controllersReserv : post('/',addReservation)
+        controllersReserv -> modelTimeslot :  TimeSlot.findById\n(req.params.timeslotId);
+        modelTimeslot -> mongoDB :  find(req.params.timeslotId);
+
+        modelTimeslot <-- mongoDB : timeslot
+        controllersReserv <-- modelTimeslot : timeslot
+
+        controllersReserv -> modelUser : User.findById(req.user.id).populate\n({path: 'reservation',select: 'timeslot'})
+        modelUser -> mongoDB : find(req.user.id).populate\n({path: 'reservation',select: 'timeslot'})
+
+        modelUser <-- mongoDB : user + user's reservation,timeslot
+        controllersReserv <-- modelUser : user + user's reservation,timeslot
+
+        ' controllersReserv -> controllersReserv : loop inside user's reservation\nto check if user have already \nreserved this timeslot, if not continue
+        ' controllersReserv -> controllersReserv : if(timeslot.reservation.length < timeslot.capacity)\n(check if timeslot's reservation amount \nhaven't exceed its capacity)
+        ' controllersReserv -> controllersReserv : if(ThisUser.reservation.length < 3)\n(check that user doesn't have more than 3 reservation)
+        
+        controllersReserv -> modelReserv : Reservation.create({user:req.user.id,timeslot:req.params.timeslotId});
+        modelReserv -> mongoDB : create({user:req.user.id,\ntimeslot:req.params.timeslotId});
+
+        controllersReserv <-- mongoDB : reservation
+        routerReserv <-- controllersReserv : reservation
+        routerTime <-- routerReserv : reservation
+        user <-- routerTime : return
+    end
+end
+
+@enduml
+
+
+

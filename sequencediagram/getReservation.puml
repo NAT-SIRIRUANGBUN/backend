@@ -1,7 +1,7 @@
 @startuml
 
 footer Page %page% of %lastpage%
-title "Reservation for admin and user"
+title "Get Reservation for user, admin and company"
 
 
 actor "User" as user
@@ -15,8 +15,6 @@ participant "<<model>>\nUser" as modelUser
 participant "<<model>>\nReservation" as modelReserv
 participant "<<model>>\nCompany" as modelComp
 database "MongoDB" as mongoDB
-
-'company get reservations only
 
 group Loop
     'get reservations for user
@@ -152,6 +150,35 @@ group Loop
         server <-- routerReserv : return
         admin <-- server : return
     end
+
+    'get single reservation for company
+    group opt 
+        company->server :getReservation(token,id)
+        server->routerReserv :use('/api/reservation'\n,reservation)
+        routerReserv -> middleAuth : protect(token)
+        middleAuth -> middleAuth : decode(token)
+        middleAuth -> modelComp : Company.findBy(decodetoken)
+        modelComp -> mongoDB : findById(decodetoken)
+
+        modelComp <-- mongoDB : company
+        middleAuth <-- modelComp : company
+        routerReserv <-- middleAuth : next()
+
+        routerReserv -> controllersReserv : get('/:id',getReservation)
+        controllersReserv -> modelReserv : Reservation.findById(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
+        modelReserv -> mongoDB :  find(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
+
+        modelReserv <-- mongoDB : reservation
+        controllersReserv <-- modelReserv : reservation
+
+        controllersReserv -> controllersReserv : if(reservation.timeslot\n.company.toString() !== req.user.id)
+
+        routerReserv <-- controllersReserv : return
+        server <-- routerReserv : return
+        company <-- server : return
+    end
+
+    
 
 end
 
