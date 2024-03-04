@@ -23,9 +23,6 @@ app.use(helmet());
 app.use(xss());
 //Rate Limiting
 
-app.use(limiter);
-
-
 
 //Route
 // app.get('/' , (req , res) => {res.status(200).json({msg : "HelloWorld"})})
