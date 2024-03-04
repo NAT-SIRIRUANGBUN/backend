@@ -63,8 +63,8 @@ group Loop
         middleAuth -> modelUser : User.findBy(decodetoken)
         modelUser -> mongoDB : findById(decodetoken)
 
-        modelUser <-- mongoDB : user
-        middleAuth <-- modelUser : user
+        modelUser <-- mongoDB : admin
+        middleAuth <-- modelUser : admin
         routerReserv <-- middleAuth : next()
 
         routerReserv -> controllersReserv : get('/',getReservations)
@@ -75,7 +75,7 @@ group Loop
         controllersReserv <-- modelReserv : all reservation
         routerReserv <-- controllersReserv : return
         server <-- routerReserv : return
-        user <-- server : return
+        admin <-- server : return
     end
 
     'get reservations for compaany
@@ -99,10 +99,10 @@ group Loop
         controllersReserv <-- modelReserv : reservation
         routerReserv <-- controllersReserv : return
         server <-- routerReserv : return
-        user <-- server : return
+        company <-- server : return
     end
 
-    'get single reservation
+    'get single reservation for user
     group opt 
         user->server :getReservation(token,id)
         server->routerReserv :use('/api/reservation'\n,reservation)
@@ -116,14 +116,41 @@ group Loop
         routerReserv <-- middleAuth : next()
 
         routerReserv -> controllersReserv : get('/:id',getReservation)
-        controllersReserv -> modelUser :  User.findById(req.user.id)\n.populate({path:'reservation\n,select:'timeslot',populate:{\npath:'timeslot',model:'TimeSlot'\n,select:'company date startTime\nendTime'}});
-        modelUser -> mongoDB :  find(req.user.id)\n.populate({path:'reservation\n,select:'timeslot',populate:{\npath:'timeslot',model:'TimeSlot'\n,select:'company date startTime\nendTime'}});
+        controllersReserv -> modelReserv : Reservation.findById(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
+        modelReserv -> mongoDB :  find(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
 
-        modelUser <-- mongoDB : user + reservation detail
-        controllersReserv <-- modelUser : user + reservation detail
+        modelReserv <-- mongoDB : reservation
+        controllersReserv <-- modelReserv : reservation
+
+        controllersReserv -> controllersReserv : if(reservation.user.toString() !== req.user.id)
+
         routerReserv <-- controllersReserv : return
         server <-- routerReserv : return
         user <-- server : return
+    end
+
+    'get single reservation for admin
+    group opt 
+        admin->server :getReservation(token,id)
+        server->routerReserv :use('/api/reservation'\n,reservation)
+        routerReserv -> middleAuth : protect(token)
+        middleAuth -> middleAuth : decode(token)
+        middleAuth -> modelUser : User.findBy(decodetoken)
+        modelUser -> mongoDB : findById(decodetoken)
+
+        modelUser <-- mongoDB : admin
+        middleAuth <-- modelUser : admin
+        routerReserv <-- middleAuth : next()
+
+        routerReserv -> controllersReserv : get('/:id',getReservation)
+        controllersReserv -> modelReserv : Reservation.findById(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
+        modelReserv -> mongoDB :  find(req.params.id)\n.populate({path: 'timeslot',select:'company\ndate startTime endTime'});
+
+        modelReserv <-- mongoDB : reservation
+        controllersReserv <-- modelReserv : reservation
+        routerReserv <-- controllersReserv : return
+        server <-- routerReserv : return
+        admin <-- server : return
     end
 
 end
