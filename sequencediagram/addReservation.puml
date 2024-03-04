@@ -5,7 +5,6 @@ title "Create Reservation for user, admin and company"
 
 actor "User" as user
 actor "Admin" as admin
-actor "Company" as company
 participant "server" as server
 participant "<<router>>\ntimeslot" as routerTime
 participant "<<router>>\nreservation" as routerReserv
@@ -14,7 +13,6 @@ participant "<<controllers>>\nreservation" as controllersReserv
 participant "<<model>>\nTimeslot" as modelTimeslot
 participant "<<model>>\nUser" as modelUser
 participant "<<model>>\nReservation" as modelReserv
-participant "<<model>>\nCompany" as modelComp
 database "MongoDB" as mongoDB
 
 group Loop
@@ -30,8 +28,6 @@ group Loop
         activate modelReserv
         activate mongoDB
         activate admin
-        activate company
-        activate modelComp
         activate modelTimeslot
         user->server :addReservation\n(token,timeslotid)
         admin -> server :addReservation\n(token,timeslotid)
@@ -69,6 +65,7 @@ group Loop
         controllersReserv <-- mongoDB : reservation
         routerReserv <-- controllersReserv : reservation
         routerTime <-- routerReserv : reservation
+        admin <-- routerTime : return
         user <-- routerTime : return
     end
 end
