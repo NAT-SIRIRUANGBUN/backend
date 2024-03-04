@@ -29,10 +29,8 @@ group Loop
         activate modelUser
         activate modelReserv
         activate mongoDB
-        activate admin
         activate modelTimeslot
         user->server :addReservation\n(token,timeslotid)
-        admin -> server :addReservation\n(token,timeslotid)
         server->routerTime :use('/api/timeslot'\n,timeslot)
         routerTime->routerReserv : use('/:timeslotId/\nreservation/'\n,reservationRouter)
         routerReserv -> middleAuth : protect(token)
