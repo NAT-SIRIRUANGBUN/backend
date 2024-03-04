@@ -33,10 +33,10 @@ group Loop
         mongoDB --> modelUser :user
         controllersAuth <-- modelUser :user 
         controllersAuth -> modelUser :user.getSignedJwtToken()
-        controllersAuth <- modelUser :token 
-        routerAuth <- controllersAuth :token
+        controllersAuth <-- modelUser :token 
+        routerAuth <-- controllersAuth :token
         deactivate routerAuth
-        user <- routerAuth :token
+        user <-- routerAuth :token
     end
 
     'Auth login
