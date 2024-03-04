@@ -40,6 +40,7 @@ exports.login_user = async (req , res , next) => {
     }
     catch(err) {
         console.error(err)
+        res.status(401).json({success:false})
     }
 }
 
