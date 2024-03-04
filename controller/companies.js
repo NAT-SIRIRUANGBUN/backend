@@ -273,7 +273,7 @@ exports.deleteTimeslot = async (req , res , next) => {
             return res.status(401).json({success : false , msg : "Please use correct company account to delete this time slot"})
     
         
-        cascadeDeleteTimeSlot([new mongoose.Types.ObjectId(req.params.timeslotid)])
+        await cascadeDeleteTimeSlot([new mongoose.Types.ObjectId(req.params.timeslotid)])
 
         res.status(200).json({success : true , timeslot : {}})
     }
