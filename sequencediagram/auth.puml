@@ -1,0 +1,93 @@
+@startuml Manage Hospital (GET ALL)
+
+footer Page %page% of %lastpage%
+title "Auth for admin and user"
+
+
+actor "User & admin" as user
+participant "server" as server
+participant "<<router>>\nreservation" as routerAuth
+participant "<<middleware>>\nauth" as middleAuth
+participant "<<controllers>>\nauth" as controllersAuth
+participant "<<model>>\nUser" as modelUser
+database "MongoDB" as mongoDB
+
+
+
+group Loop
+    'Auth register
+    group opt 
+        activate user
+        activate server
+        activate routerAuth
+        activate middleAuth
+        activate controllersAuth
+        activate modelUser
+        activate mongoDB
+        user->server :register(name,email,\nrole,password,tel)
+        server->routerAuth :use('/api/auth',auth)
+        activate routerAuth
+        routerAuth -> controllersAuth :post('/register',register_user)
+        controllersAuth->modelUser :User.create({name,\nemail,password,role,tel})
+        modelUser ->mongoDB :create({name,email,\npassword,role,tel})
+        mongoDB --> modelUser :user
+        controllersAuth <-- modelUser :user 
+        controllersAuth -> modelUser :user.getSignedJwtToken()
+        controllersAuth <- modelUser :token 
+        routerAuth <- controllersAuth :token
+        deactivate routerAuth
+        user <- routerAuth :token
+    end
+
+    'Auth login
+    group opt
+        user->server :login(email,password)
+        server->routerAuth :use('/api/auth',auth)
+        activate routerAuth
+        routerAuth -> controllersAuth :post('/login',login_user)
+        controllersAuth->modelUser :User.findOne({email})\n.select('+password')
+        modelUser ->mongoDB :findOne({email})\n.select('+password')
+        mongoDB --> modelUser :user
+        controllersAuth <-- modelUser :user
+        controllersAuth -> modelUser :user.matchPassword\n(password)
+        controllersAuth <-- modelUser :isMatch
+        controllersAuth -> modelUser :user.getSignedJwtToken()
+        controllersAuth <-- modelUser :token 
+        routerAuth <-- controllersAuth :token
+        deactivate routerAuth
+        user <-- routerAuth :token
+    end
+
+    'Auth logout
+    group opt
+        user->server :logout(token)
+        server->routerAuth :use('/api/auth',auth)
+        activate routerAuth
+        routerAuth -> controllersAuth :post('/logout',logout)
+        controllersAuth->controllersAuth :expiretoken(token)
+        routerAuth <-- controllersAuth :success:true
+        deactivate routerAuth
+        user <-- routerAuth :success:true
+    end
+
+    ' 'Auth getme
+    ' group opt
+    '     user->server :getMe(token)
+    '     server->routerAuth :use('/api/auth',auth)
+    '     activate routerAuth
+    '     routerAuth -> controllersAuth :post('/login',login_user)
+    '     controllersAuth->modelUser :User.findOne({email})\n.select('+password')
+    '     modelUser ->mongoDB :findOne({email})\n.select('+password')
+    '     mongoDB --> modelUser :user
+    '     controllersAuth <-- modelUser :user
+    '     controllersAuth -> modelUser :user.matchPassword\n(password)
+    '     controllersAuth <-- modelUser :isMatch
+    '     controllersAuth -> modelUser :user.getSignedJwtToken()
+    '     controllersAuth <-- modelUser :token 
+    '     routerAuth <-- controllersAuth :token
+    '     deactivate routerAuth
+    '     user <-- routerAuth :token
+    ' end
+end
+
+@enduml
