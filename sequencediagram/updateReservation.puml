@@ -1,12 +1,13 @@
 @startuml
 
 footer Page %page% of %lastpage%
-title "Delete Reservation for user, admin and company"
+title "Update Reservation for user, admin and company"
 
 actor "User" as user
 actor "Admin" as admin
 actor "Company" as company
 participant "server" as server
+participant "<<router>>\ntimeslot" as routerTime
 participant "<<router>>\nreservation" as routerReserv
 participant "<<middleware>>\nauth" as middleAuth
 participant "<<controllers>>\nreservation" as controllersReserv
@@ -20,6 +21,7 @@ group Loop
     group opt 
         activate user
         activate server
+        activate routerTime
         activate routerReserv
         activate middleAuth
         activate controllersReserv
@@ -31,7 +33,7 @@ group Loop
 
         user->server :deleteReservation\n(token,id)
         admin -> server :deleteReservation\n(token,id)
-        server->routerReserv :use('/api/reservation'\n,reservation)
+        server->routerReserv :use('/api/reservation',reservation)
         routerReserv -> middleAuth : protect(token)
         middleAuth -> middleAuth : decode(token)
         middleAuth -> modelUser : User.findBy(decodetoken)

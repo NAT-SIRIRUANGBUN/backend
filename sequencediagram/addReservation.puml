@@ -5,6 +5,7 @@ title "Create Reservation for user, admin and company"
 
 actor "User" as user
 actor "Admin" as admin
+actor "Company" as company
 participant "server" as server
 participant "<<router>>\ntimeslot" as routerTime
 participant "<<router>>\nreservation" as routerReserv
