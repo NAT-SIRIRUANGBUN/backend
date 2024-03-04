@@ -143,7 +143,7 @@ exports.updateReservation = async(req,res,next)=>{
             return res.status(200).json({success: true,data: reservation});
     
     
-        const ThisUser = await  User.findById(req.user.id).populate({
+        const ThisUser = await  User.findById(reservation.user).populate({
             path: 'reservation',
             select: 'timeslot'
         })
