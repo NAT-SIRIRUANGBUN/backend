@@ -90,7 +90,7 @@ exports.addReservation = async(req,res,next)=>{
         
         let isReserveThisTimeslot = false
 
-        //Check is this reservation is reserve by this user or not
+        //Check is this timeslot is reserve by this user or not
         for (let i = 0 ; i < ThisUser.reservation.length ; i++) {
             if (ThisUser.reservation[i].timeslot.toString() === req.params.timeslotId) {
                 isReserveThisTimeslot = true
@@ -130,6 +130,43 @@ exports.updateReservation = async(req,res,next)=>{
         if(reservation.user.toString()!== req.user.id && req.user.role !== 'admin'){
             return res.status(401).json({success:false,msg: `User ${req.user.id} is not authorized to update this reservation`});
         }
+
+        //
+        if(req.body.user && req.body.user.toString() !== reservation.user.toString())
+            return res.status(400).json({success : false , msg : "You can not change owner of reservation to other"})
+    
+        if (req.body.timeslot === reservation.timeslot.toString() || !req.body.timeslot)
+            return res.status(200).json({success: true,data: reservation});
+    
+    
+        const ThisUser = await  User.findById(req.user.id).populate({
+            path: 'reservation',
+            select: 'timeslot'
+        })
+        
+        let isReserveThisTimeslot = false
+
+        //Check is this timeslot is reserve by this user or not
+        for (let i = 0 ; i < ThisUser.reservation.length ; i++) {
+            if (ThisUser.reservation[i].timeslot.toString() === req.body.timeslot && ThisUser.reservation[i]._id.toString() !== req.params.id) {
+                isReserveThisTimeslot = true
+                break
+            }
+        }
+
+        if (isReserveThisTimeslot)
+            return res.status(400).json({success : false , msg : "You already reserve this timeslot"})   
+        const targetTimeslot = await TimeSlot.findById(req.body.timeslot)
+
+        const nowReserve = targetTimeslot.reservation.length
+
+        if (nowReserve >= targetTimeslot.capacity)
+            return res.status(400).json({success : false , msg : "Target timeslot has exceeded it's capacity"})
+        
+        const removeReservationFromOldTimeslot = await TimeSlot.findByIdAndUpdate(reservation.timeslot , {$pull : {reservation : req.params.id}})
+        const addReservationToNewTimeslot = await TimeSlot.findByIdAndUpdate(req.body.timeslot , {"$push" : {"reservation" : req.params.id}})
+        //
+        
         reservation = await Reservation.findByIdAndUpdate(req.params.id,req.body,{
             new:true,
             runValidators: true
