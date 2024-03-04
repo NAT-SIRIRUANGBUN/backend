@@ -64,7 +64,8 @@ group Loop
         controllersReserv -> modelReserv : Reservation.create({user:req.user.id,timeslot:req.params.timeslotId});
         modelReserv -> mongoDB : create({user:req.user.id,\ntimeslot:req.params.timeslotId});
 
-        controllersReserv <-- mongoDB : reservation
+        modelReserv <-- mongoDB : reservation
+        controllersReserv <-- modelReserv : reservation
         routerReserv <-- controllersReserv : reservation
         routerTime <-- routerReserv : reservation
         admin <-- routerTime : return
