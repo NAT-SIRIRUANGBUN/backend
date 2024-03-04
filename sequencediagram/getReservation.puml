@@ -1,4 +1,4 @@
-@startuml
+@startuml getReservation
 
 footer Page %page% of %lastpage%
 title "Get Reservation for user, admin and company"

@@ -1,4 +1,5 @@
-@startuml
+@startuml addReservation
+
 
 footer Page %page% of %lastpage%
 title "Create Reservation for user, admin and company"

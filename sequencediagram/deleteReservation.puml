@@ -1,4 +1,4 @@
-@startuml
+@startuml deleteReservation
 
 footer Page %page% of %lastpage%
 title "Delete Reservation for user, admin and company"

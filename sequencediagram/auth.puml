@@ -1,4 +1,4 @@
-@startuml Manage Hospital (GET ALL)
+@startuml Authentication
 
 footer Page %page% of %lastpage%
 title "Auth for admin and user"
