@@ -120,8 +120,6 @@ group Loop
         modelReserv <-- mongoDB : reservation
         controllersReserv <-- modelReserv : reservation
 
-        'controllersReserv -> controllersReserv : if(reservation.user.toString() !== req.user.id)
-
         routerReserv <-- controllersReserv : return
         server <-- routerReserv : return
         user <-- server : return
@@ -170,8 +168,6 @@ group Loop
 
         modelReserv <-- mongoDB : reservation
         controllersReserv <-- modelReserv : reservation
-
-        'controllersReserv -> controllersReserv : if(reservation.timeslot\n.company.toString() !== req.user.id)
 
         routerReserv <-- controllersReserv : return
         server <-- routerReserv : return

@@ -54,10 +54,6 @@ group Loop
 
         modelUser <-- mongoDB : user + user's reservation,timeslot
         controllersReserv <-- modelUser : user + user's reservation,timeslot
-
-        ' controllersReserv -> controllersReserv : loop inside user's reservation\nto check if user have already \nreserved this timeslot, if not continue
-        ' controllersReserv -> controllersReserv : if(timeslot.reservation.length < timeslot.capacity)\n(check if timeslot's reservation amount \nhaven't exceed its capacity)
-        ' controllersReserv -> controllersReserv : if(ThisUser.reservation.length < 3)\n(check that user doesn't have more than 3 reservation)
         
         controllersReserv -> modelReserv : Reservation.create({user:req.user.id,timeslot:req.params.timeslotId});
         modelReserv -> mongoDB : create({user:req.user.id,\ntimeslot:req.params.timeslotId});
