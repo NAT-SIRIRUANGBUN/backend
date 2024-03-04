@@ -78,6 +78,10 @@ exports.getReservation = async(req,res,next) => {
 
 exports.addReservation = async(req,res,next)=>{
     try{
+
+        if (req.user.role === 'admin')
+            return res.status(400).json({success : false , msg : "Admin cannot reserve timeslot"})
+
         req.body.reservation=req.params.timeslotId;
         const timeslot = await TimeSlot.findById(req.params.timeslotId);
         if(!timeslot){
@@ -104,7 +108,7 @@ exports.addReservation = async(req,res,next)=>{
         if(timeslot.reservation.length >= timeslot.capacity){
             return res.status(400).json({success:false , msg : "The timeslot have already exceeded its capacity"});
         }
-        if(ThisUser.reservation.length >= 3 && req.user.role !== 'admin'){
+        if(ThisUser.reservation.length >= 3){
             return res.status(400).json({success:false,msg:`The user with ID ${req.user.id} has already made 3 reservation`});
         }
         const reservation = await Reservation.create({
