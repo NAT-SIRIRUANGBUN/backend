@@ -1,0 +1,44 @@
+@startuml Company
+    left to right direction
+    actor "User" as user
+    rectangle "Company" as company {
+        usecase "Get All Companies" as getAllCompanies
+        usecase "Get Single Company" as getSingleCompany
+        usecase "Create Company" as createCompany
+        usecase "Update Single Company" as updateSingleCompany
+        usecase "Delete Single Company" as deleteSingleCompany
+        usecase "Company Login" as companyLogin
+        usecase "Company Logout" as companyLogout
+        usecase "GetCompanyTimeslot" as getCompanyTimeslot
+        usecase "GetCompanyDetail" as getCompanyDetail
+    }
+
+    actor "Company" as Company
+    actor "Admin" as admin
+
+    (J = just owner's)
+
+    user -- getAllCompanies
+    user -- getSingleCompany
+    user -- getCompanyTimeslot
+    user -- getCompanyDetail
+
+    Company -- getAllCompanies
+    Company -- getSingleCompany
+    Company -- "J" updateSingleCompany
+    Company -- "J" deleteSingleCompany
+    Company -- "J" companyLogin
+    Company -- "J" companyLogout
+    Company -- getCompanyTimeslot
+    Company -- getCompanyDetail
+
+    getAllCompanies -- admin
+    getSingleCompany -- admin
+    createCompany -- admin
+    updateSingleCompany -- admin
+    deleteSingleCompany -- admin
+    getCompanyTimeslot -- admin
+    getCompanyDetail -- admin
+
+    
+@enduml

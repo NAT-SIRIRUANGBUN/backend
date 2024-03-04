@@ -1,0 +1,33 @@
+@startuml User
+
+left to right direction
+    actor "User" as users
+    rectangle "User" as user {
+        usecase "Register" as register
+        usecase "Login User" as loginUser
+        usecase "Login Admin" as loginAdmin
+        usecase "Get Me" as getMe
+        usecase "Logout" as logout
+    }
+
+    actor "Company" as Company
+    actor "Admin" as admin
+
+    (J = just owner's)
+
+    users -- register
+    users -- loginUser
+    users -- getMe
+    users -- logout
+
+    register -- Company
+    getMe -- Company
+
+    register -- admin
+    loginAdmin -- admin
+    getMe -- admin
+    logout -- admin
+
+
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml Timeslot
+
+left to right direction
+    actor "User" as user
+    rectangle "Timeslot" as timeslot {
+        usecase "Get All Timeslots" as getAllTimeslots
+        usecase "Get Single Timeslot" as getSingleTimeslot
+        usecase "Create Timeslot" as createTimeslot
+        usecase "Update Single Timeslot" as updateSingleTimeslot
+        usecase "Delete Single Timeslot" as deleteSingleTimeslot
+    }
+
+    actor "Company" as companies
+    actor "Admin" as admin
+
+    (J = just owner's)
+
+    user -- getAllTimeslots
+    user -- getSingleTimeslot
+
+    admin -- getAllTimeslots
+    admin -- getSingleTimeslot
+    admin -- createTimeslot
+    admin -- updateSingleTimeslot
+    admin -- deleteSingleTimeslot
+
+    getAllTimeslots -- companies
+    getSingleTimeslot -- companies
+    createTimeslot -- "J" companies
+    updateSingleTimeslot -- "J" companies
+    deleteSingleTimeslot -- "J" companies
+
+
+@enduml

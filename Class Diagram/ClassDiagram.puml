@@ -1,0 +1,141 @@
+@startuml ClassDiagram
+
+    ' skinparam linetype ortho
+
+    class "<<Application>>\nOnlineJobFairRegistor" as JobFairAPIServices{}
+
+    package "Company" {
+            class "<<Resource>>\nCompanies" as ResourceCompanies{
+                <<GET>> +getCompanies(): Company
+                <<POST>> +createCompany(): Company
+            }
+
+            class "<<Resource>>\nCompany" as ResourceCompany {
+                <<GET>> +getCompany(): Company
+                <<PUT>> +updateCompany(): Company
+                <<DELETE>> +deleteCompany(): void
+            }
+
+            class "<<Resource>>\nCompany" as ResourceCompanyy {
+                <<POST>> +companyLogin : void
+            }
+
+            class "<<Resource>>\nCompany" as ResourceCompanyy3 {
+                <<GET>> +getCompanyDetail :Company
+            }
+
+            class "<<Resource>>\nCompany" as ResourceCompanyy2 {
+                <<POST>> +companyLogout : void
+            }
+
+            
+
+            class "<<Representation>>\nCompany" as RepresentationCompany {
+                -name
+                -address
+                -website
+                -description
+                -tel
+                -contact_email
+                -size
+                -timeslot
+            }
+
+    }
+
+    JobFairAPIServices ..> ResourceCompanies:"/companies\n<<Path>>"
+    JobFairAPIServices ..> ResourceCompanyy2:"/auth\n<<Path>>"
+    ResourceCompanies ..> ResourceCompany: "/{company_ID}\n<<Path>>"
+    ResourceCompany ..> RepresentationCompany: "<<use>>"
+    ResourceCompanies ..> ResourceCompanyy: "/auth/login\n<<Path>>"
+    ResourceCompanies ..> ResourceCompanyy3: "/auth/getdetail\n<<Path>>"
+    ResourceCompanyy3 ..> RepresentationCompany: "<<use>>"
+
+    package "User" {
+        class "<<Resource>>\nUser" as ResourceUser {
+            <<POST>> +register(): void
+            <<POST>> +loginUser(): void
+            <<POST>> +loginAdmin(): void
+            <<GET>> +getMe(): User
+            <<GET>> +logout(): void
+        }
+
+        class "<<Representation>>\nUser" as RepresentationUser {
+            -name
+            -email
+            -role
+            -tel
+            -reservation
+        }
+    }
+
+    JobFairAPIServices ..> ResourceUser: "/auth\n<<Path>>"
+    ResourceUser ..> RepresentationUser: "<<use>>"
+
+    package "Reservation" {
+        class "<<Resource>>\nReservations" as ResourceReservations {
+            <<GET>> +getReservations: Reservation
+        }
+
+        class "<<Resource>>\nReservation" as ResourceReservation {
+            <<GET>> +getReservation: Reservation
+            <<DELETE>> +deleteReservation: void
+        }
+
+        class "<<Resource>>\nReserve" as ResourceReserve {
+            <<POST>> +reserveTimeslot: void
+        } 
+
+        class "<<Representation>>\nReservation" as RepresentationReservation {
+            -date
+            -startTime
+            -endTime
+            -reservation(list of user_id that reserve this timeslot)
+        }
+    }
+
+    ResourceReservation ..> RepresentationReservation : "<<use>>"
+    JobFairAPIServices ..> ResourceReservations: "/reservation\n<<Path>>"
+    ResourceReservations ..> ResourceReservation: "{reservation_ID}\n<<PATH>>"
+
+    package "Timeslot" {
+            class "<<Resource>>\nTimeslots" as ResourceTimeslots{
+                <<GET>> +getTimeslots(): Timeslot
+            }
+
+            class "<<Resource>>\nTimeslot" as ResourceTimeslot{
+                <<GET>> +getTimeslot(): Timeslot
+            }
+
+            class "<<Resource>>\nTimeslots" as ResourceTimeslots2 {
+                <<POST>> +createTimeeslot: Timeslot
+            }
+
+            class "<<Resource>>\nTimeslot" as ResourceTimeslot2 {
+            
+                <<PUT>> +updateTimeslot(): Timeslot
+                <<DELETE>> +deleteTimeslot(): void
+            }
+
+            class "<<Representation>>\nTimeslot" as RepresentationTimeslot {
+                -companyName
+                -companyTel
+                -companyContactEmail
+                -date
+                -startTime
+                -endTime
+                -capacity
+        }
+    }
+
+    RepresentationCompany ..> RepresentationTimeslot: "<<use>>\n(timeslot)"
+
+    JobFairAPIServices ..> ResourceTimeslots: "/timeslot\n<<Path>>"
+    ResourceTimeslots ..> ResourceTimeslot: "{timeslot_ID}\n<<Path>>"
+
+    ResourceTimeslot ..>ResourceReserve: "reservation"
+
+    ResourceCompany ..> ResourceTimeslots2: "/timeslot\n<<Path>>"
+    ResourceTimeslots2 ..> ResourceTimeslot2: "{timeslot_ID}"
+    ResourceTimeslot2 ..> RepresentationTimeslot: "<<use>>"
+@enduml

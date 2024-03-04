@@ -1,0 +1,30 @@
+@startuml Reservation
+
+left to right direction
+    actor "User" as user
+    rectangle "Reservation" as reservation {
+        usecase "Get all reservation" as getAllReservation
+        usecase "Get reservation with id" as getReservationWithID
+        usecase "Reserve Timeslot" as reserveTimeslot
+        usecase "Delete Reservation" as deleteReservation
+    }
+
+    actor "Admin" as admin
+    actor "Company" as companies
+
+    (J = just owner's)
+
+    user -- "J" getAllReservation
+    user -- "J" getReservationWithID
+    user -- reserveTimeslot
+    user -- "J" deleteReservation
+
+    getAllReservation -- "J" companies
+    getReservationWithID -- "J" companies
+
+    getAllReservation -- admin
+    getReservationWithID -- admin
+    reserveTimeslot -- admin
+    deleteReservation -- admin
+
+@enduml
