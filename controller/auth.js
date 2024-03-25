@@ -45,7 +45,7 @@ exports.login_user = async (req , res , next) => {
 }
 
 //@desc     Get current logged in user
-//@route    POST /api/auth/me
+//@route    GET /api/auth/me
 //@access   Private
 exports.getRegUser = async (req , res , next) => {
     const user = await User.findById(req.user.id)
@@ -56,6 +56,42 @@ exports.getRegUser = async (req , res , next) => {
         success : true,
         data : user
     })
+}
+
+exports.updateUser = async (req , res , next) => {
+
+    const thisUser = await User.findById(req.user.id)
+
+    if (!thisUser)
+        return res.status(404).json({success:false , msg:'Can not find this user'})
+    
+    const newData = {}
+
+    if (req.body.name)
+        newData.name = req.body.name
+    
+    if (req.body.email)
+        newData.email = req.body.email
+    
+    if (req.body.tel)
+        newData.tel = req.body.tel
+
+    console.log(newData)
+    console.log(req.user.id , newData)
+
+    try {
+        const UpdateUser = await User.findByIdAndUpdate(req.user.id , newData , {new: true , runValidators: true}  )
+
+        res.status(200).json( {
+            success : true , 
+            data : UpdateUser
+        })
+    }
+    catch(err) {
+        console.error(err)
+        res.status(400).json({success : false})
+    }
+    
 }
 
 exports.login_company = async (req , res , next) => {
