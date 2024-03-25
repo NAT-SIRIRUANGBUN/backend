@@ -57,7 +57,8 @@ const CompanySchema = new mongoose.Schema({
         enum: ['S' , 'M' , 'L']
     },
     imageurl: {
-        type: String
+        type: String,
+        default : 'https://drive.google.com/file/d/1ZJwdRn4YZWioLHBIpa9zTXMzAsFtcf1k/view?usp=sharing'
     },
     timeslot: {
         type: [{

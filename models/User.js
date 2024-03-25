@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
         required: [true , 'Please add a Tel.'] ,
         match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im]
     },
+    imageurl : {
+        type : String , 
+        default : 'https://drive.google.com/file/d/1ZJwdRn4YZWioLHBIpa9zTXMzAsFtcf1k/view?usp=sharing'
+    },
     reservation: {
         type: [{
             type:mongoose.Schema.ObjectId,
