@@ -56,6 +56,9 @@ const CompanySchema = new mongoose.Schema({
         type: String ,
         enum: ['S' , 'M' , 'L']
     },
+    imageurl: {
+        type: String
+    },
     timeslot: {
         type: [{
             type:mongoose.Schema.ObjectId,
