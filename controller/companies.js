@@ -315,6 +315,16 @@ async function cascadeDeleteTimeSlot(timeSlotIdList) {
 }
 
 exports.getCompanyDetail = async (req , res , next) => {
-    const thisCompany = await Company.findById(req.user.id)
+    const thisCompany = await Company.findById(req.user.id).populate({
+        path : 'timeslot',
+        populate : {
+            path : 'reservation',
+            select: 'user',
+            populate : {
+                path : 'user',
+                select : 'name tel email'
+            }
+        }
+    })
     res.status(200).json({success : true , data : thisCompany})
 }

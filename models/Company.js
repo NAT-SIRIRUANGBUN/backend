@@ -58,7 +58,7 @@ const CompanySchema = new mongoose.Schema({
     },
     imageurl: {
         type: String,
-        default : 'https://drive.google.com/file/d/1ZJwdRn4YZWioLHBIpa9zTXMzAsFtcf1k/view?usp=sharing'
+        default : 'https://drive.usercontent.google.com/download?id=1ZJwdRn4YZWioLHBIpa9zTXMzAsFtcf1k&authuser=0'
     },
     timeslot: {
         type: [{
