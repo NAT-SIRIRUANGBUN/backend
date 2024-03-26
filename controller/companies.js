@@ -186,7 +186,6 @@ exports.createTimeslot = async (req , res , next) => {
             return res.status(401).json({success : false , msg : "Please use correct company account to create this time slot"})
         
         req.body.company = req.params.id
-
         
         let dateArray = req.body.date.split('-')
        
