@@ -44,6 +44,22 @@ exports.login_user = async (req , res , next) => {
     }
 }
 
+exports.getAllUsers = async (req, res, next) => {
+    try {
+        const users = await User.find().populate({
+            path : 'reservation',
+            populate : {
+                path : 'timeslot',
+                select: 'company date startTime endTime',
+            }
+        });
+        res.status(200).json({ success: true, data: users });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+}
+
 //@desc     Get current logged in user
 //@route    GET /api/auth/me
 //@access   Private
