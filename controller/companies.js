@@ -17,7 +17,9 @@ exports.getCompanies = async (req,res,next) => {
 
     let queryStr = JSON.stringify(reqQuery);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match=> `$${match}`);
-    query = Company.find(JSON.parse(queryStr));
+    query = Company.find(JSON.parse(queryStr)).populate({
+        path : 'timeslot'
+    })
 
     if(req.query.select){
         const fields=req.query.select.split(',').join(' ');
@@ -39,9 +41,7 @@ exports.getCompanies = async (req,res,next) => {
     try{
         const total = await Company.countDocuments();
         query = query.skip(startIndex).limit(limit);
-        const companies = await query.populate({
-            path : 'timeslot',
-        });
+        const companies = await query
         const pagination={};
         if(endIndex < total){
             pagination.next={
@@ -55,6 +55,7 @@ exports.getCompanies = async (req,res,next) => {
                 limit
             }
         }
+        
         res.status(200).json({success:true, count:companies.length, data:companies});
     }catch(err){
         console.error(err);

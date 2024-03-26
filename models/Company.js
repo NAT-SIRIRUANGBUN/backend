@@ -65,6 +65,10 @@ const CompanySchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref : "TimeSlot"
         }]
+    },
+    role : {
+        type : String,
+        default : 'company'
     }
 });
 

@@ -48,7 +48,9 @@ exports.login_user = async (req , res , next) => {
 //@route    GET /api/auth/me
 //@access   Private
 exports.getRegUser = async (req , res , next) => {
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id).populate({
+        path : 'reservation'
+    })
     if(!user){
         return res.status(404).json({success:false , msg:'Can not find this user'})
     }
