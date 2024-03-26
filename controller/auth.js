@@ -50,6 +50,10 @@ exports.getAllUsers = async (req, res, next) => {
             path : 'reservation',
             populate : {
                 path : 'timeslot',
+                populate : {
+                    path: 'company',
+                    select: 'name', // Assuming 'name' is a field in the 'company' model
+                },
                 select: 'company date startTime endTime',
             }
         });
