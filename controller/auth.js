@@ -76,8 +76,6 @@ exports.updateUser = async (req , res , next) => {
     if (req.body.tel)
         newData.tel = req.body.tel
 
-    console.log(newData)
-    console.log(req.user.id , newData)
 
     try {
         const UpdateUser = await User.findByIdAndUpdate(req.user.id , newData , {new: true , runValidators: true}  )

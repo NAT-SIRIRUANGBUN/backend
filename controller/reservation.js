@@ -1,6 +1,7 @@
 const Reservation = require('../models/Reservation');
 const {Company , TimeSlot} = require('../models/Company');
-const User = require('../models/User')
+const User = require('../models/User');
+const { model } = require('mongoose');
 
 exports.getReservations = async (req,res,next)=>{
     try{
@@ -17,7 +18,12 @@ exports.getReservations = async (req,res,next)=>{
                 populate: {
                   path: 'timeslot',
                   model: 'TimeSlot',
-                  select: 'company date startTime endTime' 
+                  select: 'company date startTime endTime',
+                  populate : {
+                    path : 'company',
+                    model: 'Company',
+                    select : 'name'
+                  }
                 }
               });
             }
@@ -54,7 +60,12 @@ exports.getReservation = async(req,res,next) => {
     try{
         const reservation = await Reservation.findById(req.params.id).populate({
             path: 'timeslot',
-            select: 'company date startTime endTime'
+            select: 'company date startTime endTime reservation capacity description',
+            populate : {
+                    path : 'company',
+                    model: 'Company',
+                    select : 'name imageurl'
+                }
         });
         if(!reservation){
             return res.status(404).json({success:false,msg: `No reservation with the id of ${req.params.id}`});

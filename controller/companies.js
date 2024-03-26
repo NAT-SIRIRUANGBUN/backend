@@ -39,7 +39,9 @@ exports.getCompanies = async (req,res,next) => {
     try{
         const total = await Company.countDocuments();
         query = query.skip(startIndex).limit(limit);
-        const companies = await query;
+        const companies = await query.populate({
+            path : 'timeslot',
+        });
         const pagination={};
         if(endIndex < total){
             pagination.next={
