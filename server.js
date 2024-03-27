@@ -6,7 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
 const {xss} = require('express-xss-sanitizer')
 
-// dotenv.config({path : './config/config.env'})
+dotenv.config({path : './config/config.env'})
 
 connectDB()
 
