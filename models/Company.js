@@ -13,14 +13,12 @@ const CompanySchema = new mongoose.Schema({
     },
     address: {
         type: String ,
-        required: [true , "Please provide an address"]
     },
     website: {
         type: String 
     },
     description: {
         type: String ,
-        required: [true , "Please provide a description"]
     },
     tel: {
         type: String ,
