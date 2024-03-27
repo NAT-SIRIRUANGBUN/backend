@@ -72,12 +72,12 @@ exports.getRegUser = async (req , res , next) => {
         path : 'reservation',
         populate : {
             path : 'timeslot',
-            poulate : {
-                path : 'company',
-                select : 'name'
-            }
+            populate : {
+                path: 'company'
+            },
+            // select: 'company date startTime endTime',
         }
-    })
+    });
     if(!user){
         return res.status(404).json({success:false , msg:'Can not find this user'})
     }
