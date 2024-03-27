@@ -87,6 +87,7 @@ exports.getCompany = async (req,res,next) => {
 //@access Private
 exports.createCompany = async (req,res,next) => {
     try {
+        console.log
         const company = await Company.create(req.body) ;
         res.status(201).json({
             success: true,
@@ -105,7 +106,6 @@ exports.createCompany = async (req,res,next) => {
 //@access Private
 exports.updateCompany = async (req,res,next) => {
     try {
-
         const thisCompany = await Company.findById(req.params.id)
 
         if (!thisCompany)

@@ -9,7 +9,8 @@ const CompanySchema = new mongoose.Schema({
         unique: true ,
         index : true,
         trim: true ,
-        maxlength: [255 , "Name can not be more then 255 characters"]
+        maxlength: [255 , "Name can not be more then 255 characters"],
+        required: [true , "Please provide name"]
     },
     address: {
         type: String ,
@@ -22,12 +23,10 @@ const CompanySchema = new mongoose.Schema({
     },
     tel: {
         type: String ,
-        required: [true , "Please provide telephone number"],
         match: [/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im]
     },
     contact_email: {
         type: String ,
-        required:[true,'Please provide a contact_email'],
         match: [/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ , 'Please add a valid email']
     },
     login_email: {
@@ -117,6 +116,9 @@ const TimeSlotSchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref: "Reservation"
         }]
+    },
+    address : {
+        type : String
     },
     description: {
         type: String
