@@ -49,7 +49,14 @@ exports.login_user = async (req , res , next) => {
 //@access   Private
 exports.getRegUser = async (req , res , next) => {
     const user = await User.findById(req.user.id).populate({
-        path : 'reservation'
+        path : 'reservation',
+        populate : {
+            path : 'timeslot',
+            poulate : {
+                path : 'company',
+                select : 'name'
+            }
+        }
     })
     if(!user){
         return res.status(404).json({success:false , msg:'Can not find this user'})
@@ -78,6 +85,8 @@ exports.updateUser = async (req , res , next) => {
     if (req.body.tel)
         newData.tel = req.body.tel
 
+    if (req.body.imageurl)
+        newData.imageurl = req.body.imageurl
 
     try {
         const UpdateUser = await User.findByIdAndUpdate(req.user.id , newData , {new: true , runValidators: true}  )
